@@ -12,7 +12,7 @@ grammers-session = { git = "https://github.com/Lonami/grammers.git" }
 grammers-tl-types = { git = "https://github.com/Lonami/grammers.git" }
 tokio = { version = "0.3", features = ["rt"] }
 async-trait = "0.1.42"
-userbot-rs-macros = {path = "..\\userbot-rs-macros"}
+userbot-rs-macros = { path = "macros/" }
 clap = { version = "3.0.0-beta.2" }
 log = "0.4"
 fern = { version = "0.5", features = ["colored"]}
