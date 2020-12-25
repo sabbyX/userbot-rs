@@ -15,8 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#![feature(in_band_lifetimes)]
-
 mod modules;
 mod utils;
 pub(crate) mod versions;
