@@ -7,12 +7,24 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-grammers-client = { git = "https://github.com/Lonami/grammers.git" }
+grammers-client = { git = "https://github.com/Lonami/grammers.git", features = ["html"] }
 grammers-session = { git = "https://github.com/Lonami/grammers.git" }
 grammers-tl-types = { git = "https://github.com/Lonami/grammers.git" }
 tokio = { version = "0.3", features = ["rt"] }
-async-trait = "0.1.42"
+async-trait = "0.1"
 userbot-rs-macros = { path = "macros/" }
 clap = { version = "3.0.0-beta.2" }
 log = "0.4"
 fern = { version = "0.5", features = ["colored"]}
+kantex-rs = { path = "..\\KanTeX" }
+dialoguer = "0.7.1"
+crossbeam-channel = "0.4.4"
+
+[dependencies.cursive]
+version = "0.15"
+default-features = false
+# Windows support
+features = ["pancurses-backend"]
+
+[build-dependencies]
+toml = "0.2"

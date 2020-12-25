@@ -20,6 +20,8 @@ pub mod core;
 // modules
 mod info;
 mod error;
+mod ping;
+
 use self::core::dispatcher::UpdateController;
 
 /// Initialize all modules and returns the [UpdateController]
@@ -27,5 +29,6 @@ pub fn initialise() -> UpdateController {
     let mut controller = UpdateController::new();
     controller.add_error_handler(Box::new(error::ProdErrorHandler));
     controller.add_handler(Box::new(info::alive_command));
+    controller.add_handler(Box::new(ping::ping));
     controller
 }

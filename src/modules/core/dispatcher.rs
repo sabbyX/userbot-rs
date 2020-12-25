@@ -68,7 +68,7 @@ impl UpdateController {
                 Ok(())
             }
         } else {
-            Err(error.into())
+            Err(error)
         }
     }
 }
