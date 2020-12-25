@@ -1,4 +1,11 @@
 on: [push, pull_request]
+env:
+  RELEASE_BIN: userbot_rs
+  RELEASE_DIR: artifacts
+  GITHUB_REF: "${{ github.ref }}"
+  WINDOWS_TARGET: x86_64-pc-windows-msvc
+  LINUX_TARGET: x86_64-unknown-linux-gnu
+
 jobs:
   build:
     strategy:
@@ -7,11 +14,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - name: Install system dependencies
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: sudo apt install libncursesw5-dev
-      - name: build
-        run: cargo build --release
+
       - uses: actions/cache@v2
         with:
           path: |
@@ -19,3 +22,31 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install system dependencies
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: sudo apt install libncursesw5-dev
+
+      - name: build
+        run: cargo build --release
+
+      - name: Query version number
+        id: get_version
+        shell: bash
+        run: |
+          echo "using version tag ${GITHUB_REF:10}"
+          echo ::set-output name=version::"${GITHUB_REF:10}"
+
+      - name: Upload artifacts (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v2
+        with:
+          name: userbot-rs-linux
+          path: ./target/release/${{ env.RELEASE_BIN }}
+
+      - name: Upload artifacts (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v2
+        with:
+          name: userbot-rs-windows
+          path: ./target/release/${{ env.RELEASE_BIN }}.exe
