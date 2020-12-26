@@ -19,7 +19,6 @@ use std::env;
 use std::fs;
 use std::path;
 use std::io::{Read, Write};
-use toml;
 
 const PACKAGES: [&str; 1] = ["grammers-client"];
 
@@ -41,5 +40,5 @@ fn main() {
     // Write out the file to be included in the module stub
     let out_dir = env::var("OUT_DIR").unwrap();
     let mut versions_file = fs::File::create(&path::Path::new(&out_dir).join("versions.rs")).unwrap();
-    versions_file.write(format!("pub const GRAMMERS_VERSION: &str = \"{}\";", version).as_ref()).unwrap();
+    versions_file.write_all(format!("pub const GRAMMERS_VERSION: &str = \"{}\";", version).as_ref()).unwrap();
 }
