@@ -14,15 +14,14 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
- 
-use std::error::Error;
 
 use async_trait::async_trait;
 use grammers_client::types::Message;
+use anyhow::{Result, Error};
 
 #[async_trait]
 pub trait ErrorHandler: HandlerClone + Send + Sync {
-    async fn handle(&self, message: Message, error: Box<dyn Error + Send + Sync>) -> Result<(), Box<dyn Error + Send + Sync>>;
+    async fn handle(&self, message: Message, error: Error) -> Result<()>;
 }
 
 pub trait HandlerClone {

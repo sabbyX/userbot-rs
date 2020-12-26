@@ -19,13 +19,14 @@ use super::core::error_handler::ErrorHandler;
 use async_trait::async_trait;
 use grammers_client::types::{Message, InputMessage};
 use log::{error, warn};
+use anyhow::{Error, Result};
 
 #[derive(Clone)]
 pub struct ProdErrorHandler;
 
 #[async_trait]
 impl ErrorHandler for ProdErrorHandler {
-    async fn handle(&self, mut message: Message, error: Box<dyn std::error::Error + Send + Sync>) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    async fn handle(&self, mut message: Message, error: Error) -> Result<()> {
         warn!("Handling error {}", error);
         match message.reply(
             InputMessage::text(format!("{}", error))

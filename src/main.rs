@@ -25,6 +25,7 @@ use grammers_client::{Client, ClientHandle, Config, Update, UpdateIter};
 use grammers_session::Session;
 use modules::core::dispatcher::UpdateController;
 use std::{self, process::exit};
+use anyhow::Result;
 
 use clap::{crate_version, AppSettings, Clap};
 use fern::colors::ColoredLevelConfig;
@@ -58,13 +59,12 @@ async fn async_main(
 ) -> std::result::Result<(), Box<dyn std::error::Error>> {
     info!("Connecting to Telegram...");
     let mut client = Client::connect(Config {
-        session: Session::load_or_create("userbot").unwrap(),
+        session: Session::load_or_create("userbot")?,
         api_id,
         api_hash: api_hash.clone(),
         params: Default::default(),
     })
-    .await
-    .unwrap();
+    .await?;
     debug!("Successfully connected..!");
     debug!("Checking whether user is authenticated...");
     if !client.is_authorized().await? {
@@ -73,8 +73,7 @@ async fn async_main(
         Builder::new()
             .spawn(
                 move || if no_gui { cmd::no_gui_interface(backend_service) } else { tui::terminal_interface_login(backend_service) }
-            )
-            .unwrap();
+            )?;
         let (_, phone) = client_service.request("requestPhone");
         match client
             .request_login_code(&phone, api_id, &*api_hash.clone())
@@ -115,7 +114,7 @@ async fn handle_updates(
     updates: UpdateIter,
     controller: Arc<UpdateController>,
     client: ClientHandle,
-) -> std::result::Result<(), Box<dyn std::error::Error>> {
+) -> Result<()> {
     for update in updates {
         if let Update::NewMessage(msg) = update {
             let result = controller.notify(&msg, &client).await;

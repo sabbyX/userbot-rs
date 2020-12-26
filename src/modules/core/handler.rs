@@ -18,10 +18,11 @@
 use async_trait::async_trait;
 use grammers_client::types::Message;
 use grammers_client::ClientHandle;
+use anyhow::Result;
 
 #[async_trait]
 pub trait Handler: HandlerClone + Send + Sync {
-    async fn handle(&self, message: Message, client: ClientHandle) -> ::std::result::Result<(), Box<dyn ::std::error::Error + Send + Sync>>;
+    async fn handle(&self, message: Message, client: ClientHandle) -> Result<()>;
 }
 
 pub trait HandlerClone {

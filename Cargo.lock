@@ -46,6 +46,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.36"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "68803225a7b13e47191bab76f2687382b60d259e8cf37f6e1893658b84bb9479"
+
+[[package]]
 name = "array-macro"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1564,7 +1570,7 @@ checksum = "f7fe0bb3479651439c9112f72b6c505038574c9fbb575ed1bf3b797fa39dd564"
 [[package]]
 name = "userbot-rs-macros"
 version = "0.1.0"
-source = "git+https://github.com/sabbyX/userbot-rs-macros.git#d80dd67acf0572476f84964dd5966b47fd1055b0"
+source = "git+https://github.com/sabbyX/userbot-rs-macros.git#8ad2b64279916917e276ef5c8082960a680c4577"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1575,6 +1581,7 @@ dependencies = [
 name = "userbot_rs"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "async-trait",
  "clap",
  "crossbeam-channel",

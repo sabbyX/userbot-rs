@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
- 
-use std::error::Error;
 
 use grammers_client::ClientHandle;
 use log::debug;
 
 use super::{error_handler::ErrorHandler, handler::Handler};
 use grammers_client::types::Message;
+use anyhow::{Result, Error};
 
 #[derive(Clone)]
 pub struct UpdateController {
@@ -43,7 +42,7 @@ impl UpdateController {
         &self,
         message: &Message,
         client: &ClientHandle,
-    ) -> ::std::result::Result<(), Box<dyn ::std::error::Error + Send + Sync>> {
+    ) -> Result<()> {
         for handler in &self.handlers {
             handler.handle(message.clone(), client.clone()).await?;
         }
@@ -59,7 +58,7 @@ impl UpdateController {
         self.error_handler = Some(handler);
     }
 
-    pub async fn propogate_error(&self, message: Message,error: Box<dyn Error + Send + Sync>) -> Result<(), Box<dyn Error + Send + Sync>> {
+    pub async fn propogate_error(&self, message: Message, error: Error) -> Result<()> {
         if let Some(handler) = &self.error_handler {
             let result = handler.handle(message, error).await;
             if result.is_err() {

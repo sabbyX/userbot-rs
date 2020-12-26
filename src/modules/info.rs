@@ -15,13 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use std::error::Error;
-
 use clap::{AppSettings, Clap};
 use grammers_client::types::Message;
 use grammers_client::{ClientHandle, InputMessage};
 use kantex_rs::*;
 use userbot_rs_macros::handler;
+use anyhow::Result;
 
 use crate::versions;
 
@@ -39,7 +38,7 @@ struct Arguments {
 pub async fn alive_command(
     mut message: Message,
     _: ClientHandle,
-) -> Result<(), Box<dyn Error + Send + Sync>> {
+) -> Result<()> {
     let args: Arguments = match Arguments::try_parse_from(
         message
             .text()
