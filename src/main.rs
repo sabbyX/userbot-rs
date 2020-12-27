@@ -24,12 +24,12 @@ mod cmd;
 use grammers_client::{Client, ClientHandle, Config, Update, UpdateIter};
 use grammers_session::Session;
 use modules::core::dispatcher::UpdateController;
-use std::{self, process::exit};
+use std::process::exit;
 use anyhow::Result;
 
 use clap::{crate_version, AppSettings, Clap};
 use fern::colors::ColoredLevelConfig;
-use log::{self, debug, error, info};
+use log::{debug, error, info, LevelFilter};
 use std::sync::{Arc};
 use tokio::runtime;
 use std::thread::Builder;
@@ -37,13 +37,18 @@ use utils::login::{create_client_backend_connection};
 use crate::utils::login::handle_signin_result;
 
 fn setup_logger() -> Result<(), fern::InitError> {
-    let color = ColoredLevelConfig::new().debug(fern::colors::Color::Blue);
+    let color = ColoredLevelConfig::new()
+        .debug(fern::colors::Color::BrightBlue)
+        .info(fern::colors::Color::BrightGreen);
+    // check whether if app is launched in debug target
+    let level = if cfg!(debug_assertions) { LevelFilter::Trace } else { LevelFilter::Info };
     fern::Dispatch::new()
+        .level(level)
         .format(move |out, message, record| {
             out.finish(format_args!(
-                "[{}][{}] {}",
-                record.target(),
+                "[{}] [{}] {}",
                 color.color(record.level()),
+                record.target(),
                 message
             ))
         })
