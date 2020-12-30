@@ -15,6 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Temporarily disabled due to dependency issue in linux
+// https://github.com/sabbyX/userbot-rs/issues/1
+// look for alternative options?
+#![allow(dead_code)]
+
 use std::thread;
 
 use crossbeam_channel::{Sender, TryRecvError};

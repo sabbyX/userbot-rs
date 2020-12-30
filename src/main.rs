@@ -29,7 +29,7 @@ use anyhow::Result;
 
 use clap::{crate_version, AppSettings, Clap};
 use fern::colors::ColoredLevelConfig;
-use log::{debug, error, info, LevelFilter};
+use log::{debug, error, info, warn, LevelFilter};
 use std::sync::{Arc};
 use tokio::runtime;
 use std::thread::Builder;
@@ -77,10 +77,13 @@ async fn async_main(args: Args,) -> std::result::Result<(), Box<dyn std::error::
     if !client.is_authorized().await? {
         info!("User isn't authorized, starting authentication process...");
         let (backend_service, client_service) = create_client_backend_connection();
-        let no_gui = args.no_gui;
+        if !args.no_gui {
+            // TODO:
+            warn!("GUI login experienced has disabled, see https://github.com/sabbyX/userbot-rs/issues/1");
+        }
         Builder::new()
             .spawn(
-                move || if no_gui { cmd::no_gui_interface(backend_service) } else { tui::terminal_interface_login(backend_service) }
+                move || cmd::no_gui_interface(backend_service)
             )?;
         let (_, phone) = client_service.request("requestPhone");
         match client
