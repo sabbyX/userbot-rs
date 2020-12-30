@@ -18,15 +18,23 @@
 use grammers_client::ClientHandle;
 use log::debug;
 
-use super::{error_handler::ErrorHandler, handler::Handler};
 use grammers_client::types::Message;
 use anyhow::{Result, Error};
+use super::{error_handler::ErrorHandler, handler::Handler};
+use super::Flags;
 
+/// Dispatcher, used to register handlers, propagate updates.
+/// # Examples
+/// ```
+/// let controller = UpdateController::new();
+/// controller.add_handler(Box::new(some_handler));
+/// // Propagate some updates...
+/// controller.notify(...);
+/// ```
 #[derive(Clone)]
 pub struct UpdateController {
-    handlers: Vec<Box<dyn Handler>>,
+    handlers: Vec<(Box<dyn Handler>, Flags)>,
     error_handler: Option<Box<dyn ErrorHandler>>,
-    //pub client: Client,
 }
 
 impl UpdateController {
@@ -34,30 +42,53 @@ impl UpdateController {
         Self {
             handlers: Vec::new(),
             error_handler: None,
-            //client,
         }
     }
 
-    pub async fn notify(
-        &self,
-        message: &Message,
-        client: &ClientHandle,
-    ) -> Result<()> {
-        for handler in &self.handlers {
+    /// Method to propagate updates to handlers
+    /// # Parameters
+    /// * `message`: Currently only supports [message](/grammers_client/types/struct.Message.html) _update type_ to be propagated!
+    pub async fn notify(&self,message: &Message, client: &ClientHandle,) -> Result<()> {
+        for (handler, flag) in &self.handlers {
+            // handle flags
+            match flag {
+                Flags::All => (),
+                Flags::SelfOnly => {
+                    // check whether message is outgoing
+                    if !message.outgoing() { continue }
+                }
+            }
             handler.handle(message.clone(), client.clone()).await?;
         }
         Ok(())
     }
 
-    pub fn add_handler(&mut self, handler: Box<dyn Handler>) {
-        debug!("Adding handler... ({:p})", &handler);
-        self.handlers.push(handler);
+    /// Method used to register a handler (can be command handler or handler the listens all [messages](/grammers_client/types/struct.Message.html))
+    /// # Parameters
+    /// * `handler`: An implemenation of trait [`Handler`](../handler/struct.Handler.html) or async function that derives macro [`handler`](/userbot_rs_macros/fn.handler.html)
+    /// * `flags`: Something like `filters`; to filter the updates to the handler, see [`Flags`](../flags/enum.Flags.html)
+    pub fn add_handler(&mut self, handler: Box<dyn Handler>, flags: Flags) {
+        debug!("Adding handler {:p} with flag `{}`", &handler, &flags);
+        self.handlers.push((handler, flags))
     }
 
+    /// Method used to register an error handler.
+    /// # Note
+    /// * There should be only <strong>ONE</strong> error handler at a time.
+    /// * If registering an error handler will overwrite the one registered before (if any).
+    /// * If any `error` happens in [handler](../error_handler/trait.ErrorHandler.html) they will result in _controlled_ exiting of program
+    /// # Parameters
+    /// * `handler`: Should be implementation of trait [`ErrorHandler`](../error_handler/trait.ErrorHandler.html)
     pub fn add_error_handler(&mut self, handler: Box<dyn ErrorHandler>) {
+        debug!("Registering error handler");
         self.error_handler = Some(handler);
     }
 
+    /// Method used to propagate errors to error handler.
+    ///
+    /// # Parameters
+    /// `message`: [message](/grammers_client/types/struct.Message.html) on which handling it causes error.
+    /// `error`: Any kind of error, if its unsupported type, use the [converter](/anyhow/macro.anyhow.html).
     pub async fn propogate_error(&self, message: Message, error: Error) -> Result<()> {
         if let Some(handler) = &self.error_handler {
             let result = handler.handle(message, error).await;

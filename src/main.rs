@@ -35,6 +35,7 @@ use tokio::runtime;
 use std::thread::Builder;
 use utils::login::{create_client_backend_connection};
 use crate::utils::login::handle_signin_result;
+use dialoguer::console::style;
 
 fn setup_logger() -> Result<(), fern::InitError> {
     let color = ColoredLevelConfig::new()
@@ -57,16 +58,17 @@ fn setup_logger() -> Result<(), fern::InitError> {
     Ok(())
 }
 
-async fn async_main(
-    api_hash: String,
-    api_id: i32,
-    no_gui: bool,
-) -> std::result::Result<(), Box<dyn std::error::Error>> {
+/*
+Main function
+
+initialise modules or launch interactive login if user isn't signed in already
+*/
+async fn async_main(args: Args,) -> std::result::Result<(), Box<dyn std::error::Error>> {
     info!("Connecting to Telegram...");
     let mut client = Client::connect(Config {
         session: Session::load_or_create("userbot")?,
-        api_id,
-        api_hash: api_hash.clone(),
+        api_id: args.app_id,
+        api_hash: args.app_hash.clone(),
         params: Default::default(),
     })
     .await?;
@@ -75,13 +77,14 @@ async fn async_main(
     if !client.is_authorized().await? {
         info!("User isn't authorized, starting authentication process...");
         let (backend_service, client_service) = create_client_backend_connection();
+        let no_gui = args.no_gui;
         Builder::new()
             .spawn(
                 move || if no_gui { cmd::no_gui_interface(backend_service) } else { tui::terminal_interface_login(backend_service) }
             )?;
         let (_, phone) = client_service.request("requestPhone");
         match client
-            .request_login_code(&phone, api_id, &*api_hash.clone())
+            .request_login_code(&phone, args.app_id, args.app_hash.clone().as_ref())
             .await
         {
             Ok(token) => {
@@ -100,11 +103,14 @@ async fn async_main(
     }
     info!("Initialising modules...");
     let controller = Arc::new(modules::initialise());
-    while let Some(updates) = client.next_updates().await.unwrap() {
+    info!("Sucessfully intialized all modules");
+    while let Ok(Some(updates)) = client.next_updates().await {
+        // copy values
         let client_handle = client.handle();
-        let arc_controller = controller.clone();
+        let controller = controller.clone();
         tokio::task::spawn(async move {
-            match handle_updates(updates, arc_controller, client_handle).await {
+            debug!("Starting to recieve updates");
+            match handle_updates(updates, controller, client_handle).await {
                 Ok(_) => {}
                 Err(e) => {
                     error!("Error while handling updates {}", e);
@@ -115,6 +121,7 @@ async fn async_main(
     Ok(())
 }
 
+/// Function to handle updates
 async fn handle_updates(
     updates: UpdateIter,
     controller: Arc<UpdateController>,
@@ -168,11 +175,11 @@ fn main() {
         .enable_all()
         .build()
         .unwrap()
-        .block_on(async_main(args.app_hash, args.app_id, args.no_gui))
+        .block_on(async_main(args))
     {
         Ok(_) => {}
         Err(e) => {
-            error!("Unhandled error occured {}", e);
+            error!("Unhandled error occured: {}", style(e.to_string()).red().bold());
             // panic!(e);
         }
     };

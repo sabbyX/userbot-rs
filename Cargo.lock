@@ -551,7 +551,7 @@ dependencies = [
 [[package]]
 name = "grammers-client"
 version = "0.2.0"
-source = "git+https://github.com/Lonami/grammers.git#ba85aacb5b91a89412c17c5eb97c900b1acf8d11"
+source = "git+https://github.com/Lonami/grammers.git#6119cb4ea750bb1ec503e43c31adac933e1bd098"
 dependencies = [
  "chrono",
  "grammers-crypto",
@@ -571,7 +571,7 @@ dependencies = [
 [[package]]
 name = "grammers-crypto"
 version = "0.2.0"
-source = "git+https://github.com/Lonami/grammers.git#ba85aacb5b91a89412c17c5eb97c900b1acf8d11"
+source = "git+https://github.com/Lonami/grammers.git#6119cb4ea750bb1ec503e43c31adac933e1bd098"
 dependencies = [
  "aes-soft",
  "aesni",
@@ -589,7 +589,7 @@ dependencies = [
 [[package]]
 name = "grammers-mtproto"
 version = "0.2.0"
-source = "git+https://github.com/Lonami/grammers.git#ba85aacb5b91a89412c17c5eb97c900b1acf8d11"
+source = "git+https://github.com/Lonami/grammers.git#6119cb4ea750bb1ec503e43c31adac933e1bd098"
 dependencies = [
  "bytes",
  "crc",
@@ -604,10 +604,9 @@ dependencies = [
 [[package]]
 name = "grammers-mtsender"
 version = "0.2.0"
-source = "git+https://github.com/Lonami/grammers.git#ba85aacb5b91a89412c17c5eb97c900b1acf8d11"
+source = "git+https://github.com/Lonami/grammers.git#6119cb4ea750bb1ec503e43c31adac933e1bd098"
 dependencies = [
  "bytes",
- "getrandom 0.2.0",
  "grammers-crypto",
  "grammers-mtproto",
  "grammers-tl-types",
@@ -618,7 +617,7 @@ dependencies = [
 [[package]]
 name = "grammers-session"
 version = "0.2.0"
-source = "git+https://github.com/Lonami/grammers.git#ba85aacb5b91a89412c17c5eb97c900b1acf8d11"
+source = "git+https://github.com/Lonami/grammers.git#6119cb4ea750bb1ec503e43c31adac933e1bd098"
 dependencies = [
  "grammers-crypto",
 ]
@@ -626,7 +625,7 @@ dependencies = [
 [[package]]
 name = "grammers-tl-gen"
 version = "0.2.0"
-source = "git+https://github.com/Lonami/grammers.git#ba85aacb5b91a89412c17c5eb97c900b1acf8d11"
+source = "git+https://github.com/Lonami/grammers.git#6119cb4ea750bb1ec503e43c31adac933e1bd098"
 dependencies = [
  "grammers-tl-parser",
 ]
@@ -634,7 +633,7 @@ dependencies = [
 [[package]]
 name = "grammers-tl-parser"
 version = "1.0.0"
-source = "git+https://github.com/Lonami/grammers.git#ba85aacb5b91a89412c17c5eb97c900b1acf8d11"
+source = "git+https://github.com/Lonami/grammers.git#6119cb4ea750bb1ec503e43c31adac933e1bd098"
 dependencies = [
  "crc32fast",
 ]
@@ -642,7 +641,7 @@ dependencies = [
 [[package]]
 name = "grammers-tl-types"
 version = "0.2.0"
-source = "git+https://github.com/Lonami/grammers.git#ba85aacb5b91a89412c17c5eb97c900b1acf8d11"
+source = "git+https://github.com/Lonami/grammers.git#6119cb4ea750bb1ec503e43c31adac933e1bd098"
 dependencies = [
  "grammers-tl-gen",
  "grammers-tl-parser",
@@ -1478,6 +1477,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "thiserror"
+version = "1.0.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "76cc616c6abf8c8928e2fdcc0dbfab37175edd8fb49a4641066ad1364fdab146"
+dependencies = [
+ "thiserror-impl",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "1.0.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9be73a2caec27583d0046ef3796c3794f868a5bc813db689eed00c7631275cd1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "time"
 version = "0.1.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1510,8 +1529,10 @@ dependencies = [
  "memchr",
  "mio",
  "pin-project-lite",
+ "signal-hook-registry",
  "slab",
  "tokio-macros",
+ "winapi 0.3.9",
 ]
 
 [[package]]
@@ -1579,7 +1600,7 @@ dependencies = [
 
 [[package]]
 name = "userbot_rs"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1589,6 +1610,7 @@ dependencies = [
  "dialoguer",
  "fern",
  "grammers-client",
+ "grammers-mtsender",
  "grammers-session",
  "grammers-tl-types",
  "kantex-rs",
@@ -1596,6 +1618,7 @@ dependencies = [
  "tokio",
  "toml",
  "userbot-rs-macros",
+ "which",
 ]
 
 [[package]]
@@ -1627,6 +1650,16 @@ name = "wasi"
 version = "0.10.0+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1a143597ca7c7793eff794def352d41792a93c481eb1042423ff7ff72ba2c31f"
+
+[[package]]
+name = "which"
+version = "4.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "87c14ef7e1b8b8ecfc75d5eca37949410046e66f15d185c01d70824f1f8111ef"
+dependencies = [
+ "libc",
+ "thiserror",
+]
 
 [[package]]
 name = "winapi"

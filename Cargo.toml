@@ -1,6 +1,6 @@
 [package]
 name = "userbot_rs"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["sabby <sabby.6@outlook.com>"]
 edition = "2018"
 
@@ -10,7 +10,8 @@ edition = "2018"
 grammers-client = { git = "https://github.com/Lonami/grammers.git", features = ["html"] }
 grammers-session = { git = "https://github.com/Lonami/grammers.git" }
 grammers-tl-types = { git = "https://github.com/Lonami/grammers.git" }
-tokio = { version = "0.3", features = ["rt"] }
+grammers-mtsender = { git = "https://github.com/lonami/grammers.git" }
+tokio = { version = "0.3", features = ["rt", "process"] }
 async-trait = "0.1"
 userbot-rs-macros = { git = "https://github.com/sabbyX/userbot-rs-macros.git" }
 clap = { version = "3.0.0-beta.2" }
@@ -20,6 +21,7 @@ kantex-rs = { git = "https://github.com/sabbyX/KanTeX.git" }
 dialoguer = "0.7.1"
 crossbeam-channel = "0.4.4"
 anyhow = "1.0.36"
+which = "4.0.2"
 
 [dependencies.cursive]
 version = "0.15"

@@ -21,14 +21,17 @@ pub mod core;
 mod info;
 mod error;
 mod ping;
+mod process;
 
 use self::core::dispatcher::UpdateController;
+use crate::modules::core::Flags;
 
-/// Initialize all modules and returns the [UpdateController]
+/// Initialize all modules and returns the [UpdateController](./core/dispatcher/struct.UpdateController.html)
 pub fn initialise() -> UpdateController {
     let mut controller = UpdateController::new();
     controller.add_error_handler(Box::new(error::ProdErrorHandler));
-    controller.add_handler(Box::new(info::alive_command));
-    controller.add_handler(Box::new(ping::ping));
+    controller.add_handler(Box::new(info::alive_command), Flags::SelfOnly);
+    controller.add_handler(Box::new(ping::ping), Flags::SelfOnly);
+    controller.add_handler(Box::new(process::process_command), Flags::SelfOnly);
     controller
 }

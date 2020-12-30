@@ -19,8 +19,17 @@ use async_trait::async_trait;
 use grammers_client::types::Message;
 use anyhow::{Result, Error};
 
+/// Implement `Error Handler`
+/// # Examples
+/// ```
+/// struct Some;
+/// impl ErrorHandler for Some {
+///     async fn handle(...) {...}
+/// }
+/// ```
 #[async_trait]
 pub trait ErrorHandler: HandlerClone + Send + Sync {
+    /// This method will first to be called by [`UpdateController`](../dispatcher/struct.UpdateController.html)
     async fn handle(&self, message: Message, error: Error) -> Result<()>;
 }
 

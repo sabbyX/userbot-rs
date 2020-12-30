@@ -18,3 +18,6 @@
 pub mod dispatcher;
 pub mod handler;
 pub mod error_handler;
+mod flags;
+
+pub use flags::Flags;

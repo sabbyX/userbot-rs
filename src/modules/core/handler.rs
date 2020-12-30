@@ -20,8 +20,15 @@ use grammers_client::types::Message;
 use grammers_client::ClientHandle;
 use anyhow::Result;
 
+/// Implement `Handler` using the trait
+/// # Examples
+/// ```
+/// struct Some;
+/// impl Handler for Some {...}
+/// ```
 #[async_trait]
 pub trait Handler: HandlerClone + Send + Sync {
+    /// This method will first to be called by [`UpdateController`](../dispatcher/struct.UpdateController.html)
     async fn handle(&self, message: Message, client: ClientHandle) -> Result<()>;
 }
 
