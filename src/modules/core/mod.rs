@@ -19,5 +19,6 @@ pub mod dispatcher;
 pub mod handler;
 pub mod error_handler;
 mod flags;
+mod command;
 
-pub use flags::Flags;
+pub use {flags::Flags, command::CommandPolicy};

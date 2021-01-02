@@ -34,7 +34,7 @@ struct Arguments {
     update: bool
 }
 
-#[handler(command = "*userbot")]
+#[handler(command = "userbot")]
 pub async fn alive_command(
     mut message: Message,
     _: ClientHandle,

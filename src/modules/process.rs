@@ -17,7 +17,7 @@ struct Arguments {
     command: Vec<String>,
 }
 
-#[handler(command = "*proc")]
+#[handler(command = "proc")]
 pub async fn process_command(mut message: Message, _: ClientHandle) -> Result<()> {
     let parsed = Arguments::try_parse_from(message.text().trim_start_matches("*proc").split_whitespace());
     if let Ok(args) = parsed {

@@ -28,7 +28,7 @@ use anyhow::Result;
 #[clap(name = "ping", setting = AppSettings::NoBinaryName, version = "0.1.0")]
 struct Arguments;
 
-#[handler(command = "*ping")]
+#[handler(command = "ping")]
 pub async fn ping(
     mut message: Message,
     mut client: ClientHandle,

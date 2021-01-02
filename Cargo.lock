@@ -1591,7 +1591,7 @@ checksum = "f7fe0bb3479651439c9112f72b6c505038574c9fbb575ed1bf3b797fa39dd564"
 [[package]]
 name = "userbot-rs-macros"
 version = "0.1.0"
-source = "git+https://github.com/sabbyX/userbot-rs-macros.git#8ad2b64279916917e276ef5c8082960a680c4577"
+source = "git+https://github.com/sabbyX/userbot-rs-macros.git#598329e381e7da81ed425a00901e63bbcf551584"
 dependencies = [
  "proc-macro2",
  "quote",

@@ -19,6 +19,8 @@ use async_trait::async_trait;
 use grammers_client::types::Message;
 use grammers_client::ClientHandle;
 use anyhow::Result;
+use crate::modules::core::Flags;
+use crate::modules::core::command::CommandPolicy;
 
 /// Implement `Handler` using the trait
 /// # Examples
@@ -30,6 +32,20 @@ use anyhow::Result;
 pub trait Handler: HandlerClone + Send + Sync {
     /// This method will first to be called by [`UpdateController`](../dispatcher/struct.UpdateController.html)
     async fn handle(&self, message: Message, client: ClientHandle) -> Result<()>;
+    fn command_policy(&self) -> CommandPolicy;
+}
+
+impl dyn Handler {
+    pub fn validate_command(&self, v: &str) -> bool {
+        match self.command_policy() {
+            CommandPolicy::Undefined => true,
+            CommandPolicy::Command(cmd) => {
+                println!("{}", cmd);
+                cmd == v
+            },
+            CommandPolicy::MultiCommand(cmds) => cmds.contains(&v)
+        }
+    }
 }
 
 pub trait HandlerClone {
@@ -50,3 +66,6 @@ impl Clone for Box<dyn Handler> {
         self.clone_box()
     }
 }
+
+#[derive(Clone)]
+pub(super) struct InternalHandlerStructure(pub Box<dyn Handler>, pub Flags);

@@ -20,8 +20,7 @@ use log::debug;
 
 use grammers_client::types::Message;
 use anyhow::{Result, Error};
-use super::{error_handler::ErrorHandler, handler::Handler};
-use super::Flags;
+use super::{error_handler::ErrorHandler, handler::{Handler, InternalHandlerStructure}, Flags};
 
 /// Dispatcher, used to register handlers, propagate updates.
 /// # Examples
@@ -33,7 +32,7 @@ use super::Flags;
 /// ```
 #[derive(Clone)]
 pub struct UpdateController {
-    handlers: Vec<(Box<dyn Handler>, Flags)>,
+    handlers: Vec<InternalHandlerStructure>,
     error_handler: Option<Box<dyn ErrorHandler>>,
 }
 
@@ -49,16 +48,21 @@ impl UpdateController {
     /// # Parameters
     /// * `message`: Currently only supports [message](/grammers_client/types/struct.Message.html) _update type_ to be propagated!
     pub async fn notify(&self,message: &Message, client: &ClientHandle,) -> Result<()> {
-        for (handler, flag) in &self.handlers {
+        if !message.text().starts_with('*') { return Ok(()); };
+        let command = &message.text().split_whitespace().next().unwrap()[1..];
+        println!("{}", command);
+        for handler in &self.handlers {
+            // validate command
+            if !handler.0.validate_command(command) { continue }
             // handle flags
-            match flag {
+            match handler.1 {
                 Flags::All => (),
                 Flags::SelfOnly => {
                     // check whether message is outgoing
                     if !message.outgoing() { continue }
                 }
             }
-            handler.handle(message.clone(), client.clone()).await?;
+            handler.0.handle(message.clone(), client.clone()).await?
         }
         Ok(())
     }
@@ -69,7 +73,7 @@ impl UpdateController {
     /// * `flags`: Something like `filters`; to filter the updates to the handler, see [`Flags`](../flags/enum.Flags.html)
     pub fn add_handler(&mut self, handler: Box<dyn Handler>, flags: Flags) {
         debug!("Adding handler {:p} with flag `{}`", &handler, &flags);
-        self.handlers.push((handler, flags))
+        self.handlers.push(InternalHandlerStructure(handler, flags))
     }
 
     /// Method used to register an error handler.
