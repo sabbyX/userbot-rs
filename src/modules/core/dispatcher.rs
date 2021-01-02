@@ -50,7 +50,6 @@ impl UpdateController {
     pub async fn notify(&self,message: &Message, client: &ClientHandle,) -> Result<()> {
         if !message.text().starts_with('*') { return Ok(()); };
         let command = &message.text().split_whitespace().next().unwrap()[1..];
-        println!("{}", command);
         for handler in &self.handlers {
             // validate command
             if !handler.0.validate_command(command) { continue }

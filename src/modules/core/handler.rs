@@ -39,10 +39,7 @@ impl dyn Handler {
     pub fn validate_command(&self, v: &str) -> bool {
         match self.command_policy() {
             CommandPolicy::Undefined => true,
-            CommandPolicy::Command(cmd) => {
-                println!("{}", cmd);
-                cmd == v
-            },
+            CommandPolicy::Command(cmd) => cmd == v,
             CommandPolicy::MultiCommand(cmds) => cmds.contains(&v)
         }
     }
