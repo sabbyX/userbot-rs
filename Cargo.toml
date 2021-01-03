@@ -16,7 +16,7 @@ async-trait = "0.1"
 userbot-rs-macros = { git = "https://github.com/sabbyX/userbot-rs-macros.git" }
 clap = { version = "3.0.0-beta.2" }
 log = "0.4"
-fern = { version = "0.5", features = ["colored"]}
+fern = { version = "0.6", features = ["colored"]}
 kantex-rs = { git = "https://github.com/sabbyX/KanTeX.git" }
 dialoguer = "0.7.1"
 crossbeam-channel = "0.4.4"
