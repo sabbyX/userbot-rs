@@ -20,7 +20,7 @@ fern = { version = "0.5", features = ["colored"]}
 kantex-rs = { git = "https://github.com/sabbyX/KanTeX.git" }
 dialoguer = "0.7.1"
 crossbeam-channel = "0.4.4"
-anyhow = "1.0.36"
+anyhow = "1.0.37"
 which = "4.0.2"
 
 [dependencies.cursive]
