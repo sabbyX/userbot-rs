@@ -134,6 +134,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e0dcbc35f504eb6fc275a6d20e4ebcda18cf50d40ba6fabff8c711fa16cb3b16"
 
 [[package]]
+name = "bytes"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad1f8e949d755f9d79112b5bb46938e0ef9d3804a0b16dfab13aafcaa5f0fa72"
+
+[[package]]
 name = "cc"
 version = "1.0.66"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -565,7 +571,7 @@ dependencies = [
  "md5",
  "mime_guess",
  "os_info",
- "tokio",
+ "tokio 0.3.6",
 ]
 
 [[package]]
@@ -591,7 +597,7 @@ name = "grammers-mtproto"
 version = "0.2.0"
 source = "git+https://github.com/Lonami/grammers.git#6119cb4ea750bb1ec503e43c31adac933e1bd098"
 dependencies = [
- "bytes",
+ "bytes 0.6.0",
  "crc",
  "flate2",
  "getrandom 0.2.0",
@@ -606,12 +612,12 @@ name = "grammers-mtsender"
 version = "0.2.0"
 source = "git+https://github.com/Lonami/grammers.git#6119cb4ea750bb1ec503e43c31adac933e1bd098"
 dependencies = [
- "bytes",
+ "bytes 0.6.0",
  "grammers-crypto",
  "grammers-mtproto",
  "grammers-tl-types",
  "log",
- "tokio",
+ "tokio 0.3.6",
 ]
 
 [[package]]
@@ -1330,12 +1336,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fa8f3741c7372e75519bd9346068370c9cdaabcc1f9599cbcf2a2719352286b7"
 
 [[package]]
-name = "slab"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c111b5bd5695e56cffe5129854aa230b39c93a305372fdbb2668ca2394eea9f8"
-
-[[package]]
 name = "socket2"
 version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1518,20 +1518,32 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "0.3.5"
+version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a12a3eb39ee2c231be64487f1fcbe726c8f2514876a55480a5ab8559fc374252"
+checksum = "720ba21c25078711bf456d607987d95bce90f7c3bea5abe1db587862e7a1e87c"
 dependencies = [
  "autocfg",
- "bytes",
- "lazy_static",
+ "bytes 0.6.0",
  "libc",
  "memchr",
  "mio",
  "pin-project-lite",
- "signal-hook-registry",
- "slab",
  "tokio-macros",
+]
+
+[[package]]
+name = "tokio"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d258221f566b6c803c7b4714abadc080172b272090cdc5e244a6d4dd13c3a6bd"
+dependencies = [
+ "autocfg",
+ "bytes 1.0.0",
+ "libc",
+ "mio",
+ "once_cell",
+ "pin-project-lite",
+ "signal-hook-registry",
  "winapi 0.3.9",
 ]
 
@@ -1615,7 +1627,7 @@ dependencies = [
  "grammers-tl-types",
  "kantex-rs",
  "log",
- "tokio",
+ "tokio 1.0.1",
  "toml",
  "userbot-rs-macros",
  "which",
