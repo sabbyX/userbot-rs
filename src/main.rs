@@ -20,6 +20,7 @@ mod utils;
 pub(crate) mod versions;
 mod tui;
 mod cmd;
+mod config;
 
 use grammers_client::{Client, ClientHandle, Config, Update, UpdateIter};
 use grammers_session::Session;
@@ -29,13 +30,14 @@ use anyhow::Result;
 
 use clap::{crate_version, AppSettings, Clap};
 use fern::colors::ColoredLevelConfig;
-use log::{debug, error, info, warn, LevelFilter};
+use log::{debug, error, info, LevelFilter};
 use std::sync::{Arc};
 use tokio::runtime;
 use std::thread::Builder;
 use utils::login::{create_client_backend_connection};
 use crate::utils::login::handle_signin_result;
 use dialoguer::console::style;
+use crate::config::ConfigControl;
 
 fn setup_logger() -> Result<(), fern::InitError> {
     let color = ColoredLevelConfig::new()
@@ -63,12 +65,16 @@ Main function
 
 initialise modules or launch interactive login if user isn't signed in already
 */
-async fn async_main(args: Args,) -> std::result::Result<(), Box<dyn std::error::Error>> {
+async fn async_main(
+    config_control: config::ConfigControl,
+) -> anyhow::Result<()> {
     info!("Connecting to Telegram...");
+    let telegram_conf = config_control.get_telegram_conf()
+        .ok_or_else(|| anyhow::anyhow!("Failed to get telegram configuration"))?;
     let mut client = Client::connect(Config {
         session: Session::load_or_create("userbot")?,
-        api_id: args.app_id,
-        api_hash: args.app_hash.clone(),
+        api_id: telegram_conf.api_id,
+        api_hash: telegram_conf.api_hash.clone(),
         params: Default::default(),
     })
     .await?;
@@ -77,17 +83,21 @@ async fn async_main(args: Args,) -> std::result::Result<(), Box<dyn std::error::
     if !client.is_authorized().await? {
         info!("User isn't authorized, starting authentication process...");
         let (backend_service, client_service) = create_client_backend_connection();
-        if !args.no_gui {
+        /*if !args.no_gui {
             // TODO:
             warn!("GUI login experienced has disabled, see https://github.com/sabbyX/userbot-rs/issues/1");
-        }
+        }*/
         Builder::new()
             .spawn(
                 move || cmd::no_gui_interface(backend_service)
             )?;
         let (_, phone) = client_service.request("requestPhone");
         match client
-            .request_login_code(&phone, args.app_id, args.app_hash.clone().as_ref())
+            .request_login_code(
+                &phone,
+                telegram_conf.api_id,
+                telegram_conf.api_hash.as_str()
+            )
             .await
         {
             Ok(token) => {
@@ -165,7 +175,16 @@ struct Args {
 }
 
 fn main() {
-    let args: Args = Args::parse();
+    debug!("Checking for saved telegram configuration");
+    let conf_is_exist = ConfigControl::check_section_exists("telegram");
+    let config_control = match conf_is_exist {
+        true => ConfigControl::get_config().unwrap(),
+        false => {
+            let args = Args::parse() as Args;
+            ConfigControl::write_raw_telegram_conf(args.app_id, args.app_hash);
+            ConfigControl::get_config().unwrap()
+        }
+    };
     // setup the logger
     match setup_logger() {
         Ok(_) => {}
@@ -178,7 +197,7 @@ fn main() {
         .enable_all()
         .build()
         .unwrap()
-        .block_on(async_main(args))
+        .block_on(async_main(config_control))
     {
         Ok(_) => {}
         Err(e) => {
