@@ -19,7 +19,7 @@
 use std::time::Duration;
 use grammers_client::{SignInError, Client};
 use log::{debug, warn, info};
-use grammers_tl_types::types::User;
+use grammers_client::types::User;
 use std::{borrow::Cow, future::Future, pin::Pin};
 use crossbeam_channel::{unbounded, Sender, Receiver, SendError, TryRecvError, RecvTimeoutError};
 use std::process::exit;
@@ -148,7 +148,7 @@ pub async fn handle_signin_result(result: Result<User, SignInError>, client_serv
             }
         }
         Ok(user) => {
-            info!("successfully logined as {}", user.id);
+            info!("successfully logined as {}", user.id());
             let result = client_service.request("loginSuccess");
             match (result.0.as_ref(), result.1.as_ref()) {
                 ("error", _) => {
