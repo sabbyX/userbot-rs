@@ -18,7 +18,6 @@
 mod modules;
 mod utils;
 pub(crate) mod versions;
-mod tui;
 mod cmd;
 
 use grammers_client::{Client, ClientHandle, Config, Update, UpdateIter};
