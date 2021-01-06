@@ -15,6 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/// Configuration schema
+pub struct Config {
+    /// Telegram API configurations
+    pub telegram: Telegram
+}
+
 pub struct Telegram {
     /// Api ID from Telegram
     pub api_id: i32,

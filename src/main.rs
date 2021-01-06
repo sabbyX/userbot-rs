@@ -66,11 +66,10 @@ Main function
 initialise modules or launch interactive login if user isn't signed in already
 */
 async fn async_main(
-    config_control: config::ConfigControl,
+    config: config::Config,
 ) -> anyhow::Result<()> {
     info!("Connecting to Telegram...");
-    let telegram_conf = config_control.get_telegram_conf()
-        .ok_or_else(|| anyhow::anyhow!("Failed to get telegram configuration"))?;
+    let telegram_conf = config.telegram;
     let mut client = Client::connect(Config {
         session: Session::load_or_create("userbot")?,
         api_id: telegram_conf.api_id,
@@ -159,32 +158,22 @@ async fn handle_updates(
 
 /// Yet another userbot, but in rust!
 #[derive(Clap)]
-#[clap(name = "userbot-rs", author = "Sabby", setting = AppSettings::ArgRequiredElseHelp, version = crate_version!())]
+#[clap(name = "userbot-rs", author = "Sabby", version = crate_version!())]
 struct Args {
     /// App id, provided by telegram, get it from telegram.org
     #[clap(long)]
-    app_id: i32,
+    app_id: Option<i32>,
 
     /// App hash, provided by telegram, get it from telegram.org
     #[clap(long)]
-    app_hash: String,
+    app_hash: Option<String>,
 
     /// Launch userbot in No-GUI way
     #[clap(long)]
     no_gui: bool,
 }
 
-fn main() {
-    debug!("Checking for saved telegram configuration");
-    let conf_is_exist = ConfigControl::check_section_exists("telegram");
-    let config_control = match conf_is_exist {
-        true => ConfigControl::get_config().unwrap(),
-        false => {
-            let args = Args::parse() as Args;
-            ConfigControl::write_raw_telegram_conf(args.app_id, args.app_hash);
-            ConfigControl::get_config().unwrap()
-        }
-    };
+fn main() -> anyhow::Result<()> {
     // setup the logger
     match setup_logger() {
         Ok(_) => {}
@@ -193,6 +182,38 @@ fn main() {
             panic!(e);
         }
     }
+
+    let args = Args::parse() as Args;
+    let config_control = if args.app_id.is_none() | args.app_hash.is_none() {
+        debug!("Cant find `API ID` or `API_HASH`, checking for saved configuration");
+        let is_tgconf_exist = ConfigControl::check_section_exists("telegram");
+        if !is_tgconf_exist {
+            println!(
+                "Can't fetch `{}` or `{}`, view help by using flag `{}` or `{}`",
+                style("api_id").blue(),
+                style("api_hash").blue(),
+                style("-h").green(),
+                style("--help").green()
+            );
+            std::process::exit(1)
+        } else {
+            // `get_config` must return config, as its not expected that config doesnt exist after above check
+            ConfigControl::get_config().ok_or(anyhow::anyhow!("Failed to get config"))?.get_config_schema()?
+        }
+    } else {
+        debug!("Updating configuration file with new API data");
+        let conf = ConfigControl::get_config();
+        if let Some(mut conf) = conf {
+            conf.write_telegram_conf(args.app_id.unwrap(), args.app_hash.unwrap())?;
+            debug!("Successfully updated the configuration file");
+            conf.get_config_schema()?
+        } else {
+            error!("Unexepected result occured when updating configuration file");
+            // generate a fake config
+            utils::startup::generate_fake_config(args.app_id.unwrap(), args.app_hash.unwrap())
+        }
+    };
+
     match runtime::Builder::new_current_thread()
         .enable_all()
         .build()
@@ -205,4 +226,5 @@ fn main() {
             // panic!(e);
         }
     };
+    Ok(())
 }

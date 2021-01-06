@@ -20,4 +20,4 @@ mod control;
 mod utils;
 mod loader;
 
-pub use {schema::Telegram, loader::load_config, control::ConfigControl};
+pub use {schema::{Telegram, Config}, loader::load_config, control::ConfigControl};

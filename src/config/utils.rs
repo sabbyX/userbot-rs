@@ -15,10 +15,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use std::path::PathBuf;
+use std::{fs::{File, create_dir_all}, path::PathBuf};
 use std::env::var_os;
 use std::ffi::OsString;
 
 pub fn get_config_path() -> PathBuf {
-    PathBuf::from(&var_os("USERBOT_CONFIG_PATH").unwrap_or_else(|| OsString::from("data/config.toml")))
+    let path = PathBuf::from(&var_os("USERBOT_CONFIG_PATH").unwrap_or_else(|| OsString::from("data/config.ini")));
+    if !path.exists() {
+        // creates conf file if it doesnt exists
+        if let Some(parent) = path.parent() {
+            // make sure dir exists
+            if !parent.exists()  { create_dir_all(parent); }
+        }
+        File::create(path.clone());
+    }
+    path
 }

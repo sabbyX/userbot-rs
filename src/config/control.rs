@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use super::{Telegram, load_config, utils::get_config_path};
+use super::{Config, Telegram, load_config, utils::get_config_path};
 
 /// High level implementation to do operations with config file
 pub struct ConfigControl {
@@ -31,6 +31,17 @@ impl ConfigControl {
                 config: load_config()?
             }
         )
+    }
+
+    /// returns the saved configurations at the momemnt
+    pub fn get_config_schema(&self) -> anyhow::Result<Config> {
+        let telegram_conf = &self.config.section(Some("telegram")).ok_or(anyhow::anyhow!("Failed to get `telegram` section in configuration file"))?;
+        Ok(Config {
+            telegram: Telegram {
+                api_id: telegram_conf.get("api_id").ok_or(anyhow::anyhow!("Failed to fetch api id"))?.parse()?,
+                api_hash: telegram_conf.get("api_hash").ok_or(anyhow::anyhow!("Failed to fetch api hash"))?.parse()?
+            }
+        })
     }
 
     pub fn write_telegram_conf(&mut self, api_id: i32, api_hash: String) -> anyhow::Result<&Self> {
@@ -49,26 +60,9 @@ impl ConfigControl {
         ini
     }
 
-    pub fn write_raw_telegram_conf(api_id: i32, api_hash: String) -> Self {
-        let ini = Self::__gen_telegram_section(api_id, api_hash, None);
-        Self {
-            config: ini
-        }
-    }
-
     #[allow(dead_code)]
     pub fn write_to_conf(&self, _: ini::SectionSetter) -> anyhow::Result<&Self> {
         unimplemented!()
-    }
-
-    pub fn get_telegram_conf(&self) -> Option<Telegram> {
-        let telegram_section = self.config.section(Some("telegram"))?;
-        Some(
-            Telegram {
-                api_id: telegram_section.get("api_id")?.parse().ok()?,
-                api_hash: telegram_section.get("api_hash")?.parse().ok()?,
-            }
-        )
     }
 
     /// Consumes `self` and returns reloaded [ConfigControl](./struct.ConfigControl.html)
