@@ -19,7 +19,7 @@ log = "0.4"
 fern = { version = "0.6", features = ["colored"]}
 kantex-rs = { git = "https://github.com/sabbyX/KanTeX.git" }
 dialoguer = "0.7.1"
-crossbeam-channel = "0.4.4"
+crossbeam-channel = "0.5.0"
 anyhow = "1.0.37"
 which = "4.0.2"
 
