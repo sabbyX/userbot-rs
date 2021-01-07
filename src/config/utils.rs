@@ -21,10 +21,14 @@ use log::error;
 use directories::ProjectDirs;
 use dialoguer::console::style;
 
+// data to find project dir
 const ORGANIZATION: &str = "userbot-rs";
 const QUALIFIER: &str = "";
 const APPLICATION_NAME: &str = "telegram-userbot";
+
+// config file/path data
 const CONFIG_PATH_ENV: &str = "USERBOT_CONFIG_PATH";
+const CONFIG_FILENAME: &str = "config.ini";
 
 pub fn get_config_path() -> PathBuf {
     let project_dir = ProjectDirs::from(
@@ -33,7 +37,7 @@ pub fn get_config_path() -> PathBuf {
         APPLICATION_NAME,
     );
     let config_path = if let Some(paths) = project_dir {
-        paths.config_dir().to_path_buf()
+        paths.config_dir().to_path_buf().join("config.ini")
     } else {
         let path_env_var = &var_os(CONFIG_PATH_ENV);
         if path_env_var.is_none() {
@@ -44,7 +48,7 @@ pub fn get_config_path() -> PathBuf {
             std::process::exit(1)
         } else {
             let path = path_env_var.as_ref().unwrap();
-            PathBuf::from(path)
+            PathBuf::from(path).join("config.ini")
         }
     };
     if !config_path.exists() {
