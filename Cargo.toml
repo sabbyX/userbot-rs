@@ -23,6 +23,7 @@ crossbeam-channel = "0.4.4"
 anyhow = "1.0.37"
 which = "4.0.2"
 rust-ini = "0.16"
+directories = "3.0.1"
 
 [dependencies.cursive]
 version = "0.15"

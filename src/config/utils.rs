@@ -17,17 +17,45 @@
 
 use std::{fs::{File, create_dir_all}, path::PathBuf};
 use std::env::var_os;
-use std::ffi::OsString;
+use log::error;
+use directories::ProjectDirs;
+use dialoguer::console::style;
+
+const ORGANIZATION: &str = "userbot-rs";
+const QUALIFIER: &str = "";
+const APPLICATION_NAME: &str = "telegram-userbot";
+const CONFIG_PATH_ENV: &str = "USERBOT_CONFIG_PATH";
 
 pub fn get_config_path() -> PathBuf {
-    let path = PathBuf::from(&var_os("USERBOT_CONFIG_PATH").unwrap_or_else(|| OsString::from("data/config.ini")));
-    if !path.exists() {
-        // creates conf file if it doesnt exists
-        if let Some(parent) = path.parent() {
-            // make sure dir exists
-            if !parent.exists()  { create_dir_all(parent); }
+    let project_dir = ProjectDirs::from(
+        QUALIFIER,
+        ORGANIZATION,
+        APPLICATION_NAME,
+    );
+    let config_path = if let Some(paths) = project_dir {
+        paths.config_dir().to_path_buf()
+    } else {
+        let path_env_var = &var_os(CONFIG_PATH_ENV);
+        if path_env_var.is_none() {
+            error!(
+                "Cannot determine the configuration path from Operating system, you could set custom config path using env var `{}`",
+                style(CONFIG_PATH_ENV).blue().bold()
+            );
+            std::process::exit(1)
+        } else {
+            let path = path_env_var.as_ref().unwrap();
+            PathBuf::from(path)
         }
-        File::create(path.clone());
+    };
+    if !config_path.exists() {
+        // creates conf file if it doesnt exists
+        if let Some(parent) = config_path.parent() {
+            // make sure dir exists
+            // TODO: handle Result
+            if !parent.exists()  { create_dir_all(parent).unwrap(); }
+        }
+        // TODO: handle Result
+        File::create(config_path.clone()).unwrap();
     }
-    path
+    config_path
 }

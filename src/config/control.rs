@@ -35,11 +35,11 @@ impl ConfigControl {
 
     /// returns the saved configurations at the momemnt
     pub fn get_config_schema(&self) -> anyhow::Result<Config> {
-        let telegram_conf = &self.config.section(Some("telegram")).ok_or(anyhow::anyhow!("Failed to get `telegram` section in configuration file"))?;
+        let telegram_conf = &self.config.section(Some("telegram")).ok_or_else(|| anyhow::anyhow!("Failed to get `telegram` section in configuration file"))?;
         Ok(Config {
             telegram: Telegram {
-                api_id: telegram_conf.get("api_id").ok_or(anyhow::anyhow!("Failed to fetch api id"))?.parse()?,
-                api_hash: telegram_conf.get("api_hash").ok_or(anyhow::anyhow!("Failed to fetch api hash"))?.parse()?
+                api_id: telegram_conf.get("api_id").ok_or_else(|| anyhow::anyhow!("Failed to fetch api id"))?.parse()?,
+                api_hash: telegram_conf.get("api_hash").ok_or_else(|| anyhow::anyhow!("Failed to fetch api hash"))?.parse()?
             }
         })
     }
@@ -73,10 +73,10 @@ impl ConfigControl {
 
     pub fn check_section_exists(section_name: &str) -> bool {
         let config = load_config();
-        if let None = load_config() { return false; }
+        if config.is_none() { return false; }
         let config = config.unwrap();
         let section = config.section(Some(section_name));
-        if let None = section { return false; }
+        if section.is_none() { return false; }
         true
     }
 }

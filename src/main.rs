@@ -28,7 +28,7 @@ use modules::core::dispatcher::UpdateController;
 use std::process::exit;
 use anyhow::Result;
 
-use clap::{crate_version, AppSettings, Clap};
+use clap::{crate_version, Clap};
 use fern::colors::ColoredLevelConfig;
 use log::{debug, error, info, LevelFilter};
 use std::sync::{Arc};
@@ -198,7 +198,7 @@ fn main() -> anyhow::Result<()> {
             std::process::exit(1)
         } else {
             // `get_config` must return config, as its not expected that config doesnt exist after above check
-            ConfigControl::get_config().ok_or(anyhow::anyhow!("Failed to get config"))?.get_config_schema()?
+            ConfigControl::get_config().ok_or_else(|| anyhow::anyhow!("Failed to get config"))?.get_config_schema()?
         }
     } else {
         debug!("Updating configuration file with new API data");
