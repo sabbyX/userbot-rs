@@ -18,6 +18,8 @@
 use crate::config;
 use dialoguer::console::style;
 use std::fs::remove_file;
+use std::path::PathBuf;
+use crate::config::{ConfigControl, get_config_path};
 
 /// Function to reset the configuration file, delicately made to function `--reset-conf` flag.
 /// Yet, it will exit immediately after the reset
@@ -34,4 +36,27 @@ pub fn reset_configuration_file() -> ! {
         }
     }
     std::process::exit(0)
+}
+
+/// Alerts user that no `API_ID` / `API_HASH` found in configuration files
+pub fn alert_no_api_conf_found() -> ! {
+    println!(
+        "Can't fetch `{}` or `{}`, view help by using flag `{}` or `{}`",
+        style("api_id").blue(),
+        style("api_hash").blue(),
+        style("-h").green(),
+        style("--help").green()
+    );
+    std::process::exit(1)
+}
+
+// returns configuration file, if not found exits
+pub fn extract_ok_configuration(path: Option<PathBuf>) -> ConfigControl {
+    match ConfigControl::get_config(path.clone()) {
+        None => {
+            log::error!("Failed to get configuration file from ({})", path.unwrap_or_else(|| get_config_path(false)).display());
+            std::process::exit(1)
+        }
+        Some(val) => val
+    }
 }

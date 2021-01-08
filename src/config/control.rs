@@ -16,6 +16,7 @@
  */
 
 use super::{Config, Telegram, load_config, utils::get_config_path};
+use std::path::PathBuf;
 
 /// High level implementation to do operations with config file
 pub struct ConfigControl {
@@ -25,10 +26,10 @@ pub struct ConfigControl {
 impl ConfigControl {
 
     /// Creates new `ConfigControl` instance
-    pub fn get_config() -> Option<Self> {
+    pub fn get_config(path: Option<PathBuf>) -> Option<Self> {
         Some(
             Self {
-                config: load_config()?
+                config: load_config(path)?
             }
         )
     }
@@ -67,12 +68,12 @@ impl ConfigControl {
 
     /// Consumes `self` and returns reloaded [ConfigControl](./struct.ConfigControl.html)
     pub fn reload(&mut self) -> Option<()> {
-        self.config = load_config()?;
+        self.config = load_config(None)?;
         Some(())
     }
 
-    pub fn check_section_exists(section_name: &str) -> bool {
-        let config = load_config();
+    pub fn check_section_exists(section_name: &str, path: Option<PathBuf>) -> bool {
+        let config = load_config(path);
         if config.is_none() { return false; }
         let config = config.unwrap();
         let section = config.section(Some(section_name));

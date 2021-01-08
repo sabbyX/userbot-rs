@@ -18,9 +18,10 @@
 use super::utils::get_config_path;
 use log::{error, warn};
 use dialoguer::console::style;
+use std::path::PathBuf;
 
-pub fn load_config() -> Option<ini::Ini> {
-    match ini::Ini::load_from_file(get_config_path(true)) {
+pub fn load_config(path: Option<PathBuf>) -> Option<ini::Ini> {
+    match ini::Ini::load_from_file(path.unwrap_or_else(|| get_config_path(true))) {
         Ok(val) => Some(val),
         Err(e) => {
             match e {

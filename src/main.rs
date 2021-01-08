@@ -163,13 +163,17 @@ async fn handle_updates(
 #[derive(Clap)]
 #[clap(name = "userbot-rs", author = "Sabby", version = crate_version!())]
 struct Args {
-    /// App id, provided by telegram, get it from telegram.org
+    /// App id, provided by telegram, get it from telegram.org (optional if configuration file has it)
     #[clap(long)]
     app_id: Option<i32>,
 
-    /// App hash, provided by telegram, get it from telegram.org
+    /// App hash, provided by telegram, get it from telegram.org (optional if configuration file has it)
     #[clap(long)]
     app_hash: Option<String>,
+
+    /// Path to configuration file (example: https://github.com/sabbyX/userbot-rs/blob/master/example_config.ini)
+    #[clap(long)]
+    config: Option<PathBuf>,
 
     /// Launch userbot in No-GUI way
     #[clap(long)]
@@ -196,25 +200,24 @@ fn main() -> anyhow::Result<()> {
         utils::functions::reset_configuration_file()
     }
 
-    let config_control = if args.app_id.is_none() | args.app_hash.is_none() {
+    let config_control = if let Some(config_path) = args.config {
+        debug!("Loading configuration file from user-defined path ({})", config_path.display());
+        if !ConfigControl::check_section_exists("telegram", Some(config_path.clone())) {
+            utils::functions::alert_no_api_conf_found()
+        } else {
+            utils::functions::extract_ok_configuration(Some(config_path)).get_config_schema()?
+        }
+    } else if args.app_id.is_none() | args.app_hash.is_none() {
         debug!("Cant find `API ID` or `API_HASH`, checking for saved configuration");
-        let is_conf_exist = ConfigControl::check_section_exists("telegram");
-        if !is_conf_exist {
-            println!(
-                "Can't fetch `{}` or `{}`, view help by using flag `{}` or `{}`",
-                style("api_id").blue(),
-                style("api_hash").blue(),
-                style("-h").green(),
-                style("--help").green()
-            );
-            std::process::exit(1)
+        if !ConfigControl::check_section_exists("telegram", None) {
+            utils::functions::alert_no_api_conf_found()
         } else {
             // `get_config` must return config, as its not expected that config doesnt exist after above check
-            ConfigControl::get_config().ok_or_else(|| anyhow::anyhow!("Failed to get config"))?.get_config_schema()?
+            utils::functions::extract_ok_configuration(None).get_config_schema()?
         }
     } else {
         debug!("Updating configuration file with new API data");
-        let conf = ConfigControl::get_config();
+        let conf = ConfigControl::get_config(None);
         if let Some(mut conf) = conf {
             conf.write_telegram_conf(args.app_id.unwrap(), args.app_hash.unwrap())?;
             debug!("Successfully updated the configuration file");
