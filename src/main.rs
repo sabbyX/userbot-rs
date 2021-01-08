@@ -171,6 +171,10 @@ struct Args {
     /// Launch userbot in No-GUI way
     #[clap(long)]
     no_gui: bool,
+
+    /// Resets the configuration file
+    #[clap(long)]
+    reset_conf: bool
 }
 
 fn main() -> anyhow::Result<()> {
@@ -184,6 +188,11 @@ fn main() -> anyhow::Result<()> {
     }
 
     let args = Args::parse() as Args;
+
+    if args.reset_conf {
+        utils::functions::reset_configuration_file()
+    }
+
     let config_control = if args.app_id.is_none() | args.app_hash.is_none() {
         debug!("Cant find `API ID` or `API_HASH`, checking for saved configuration");
         let is_tgconf_exist = ConfigControl::check_section_exists("telegram");

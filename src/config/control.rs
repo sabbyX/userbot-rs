@@ -33,7 +33,7 @@ impl ConfigControl {
         )
     }
 
-    /// returns the saved configurations at the momemnt
+    /// returns the saved configurations at the moment
     pub fn get_config_schema(&self) -> anyhow::Result<Config> {
         let telegram_conf = &self.config.section(Some("telegram")).ok_or_else(|| anyhow::anyhow!("Failed to get `telegram` section in configuration file"))?;
         Ok(Config {
@@ -46,7 +46,7 @@ impl ConfigControl {
 
     pub fn write_telegram_conf(&mut self, api_id: i32, api_hash: String) -> anyhow::Result<&Self> {
         let ini = Self::__gen_telegram_section(api_id, api_hash, Some(self.config.clone()));
-        ini.write_to_file(get_config_path())?;
+        ini.write_to_file(get_config_path(true))?;
         // well, its not intended that reloading should give `Option`, we have already written config to the path
         self.reload().unwrap();
         Ok(self)

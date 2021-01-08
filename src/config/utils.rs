@@ -30,7 +30,11 @@ const APPLICATION_NAME: &str = "telegram-userbot";
 const CONFIG_PATH_ENV: &str = "USERBOT_CONFIG_PATH";
 const CONFIG_FILENAME: &str = "config.ini";
 
-pub fn get_config_path() -> PathBuf {
+/// get configuration file path according to Operating System
+///
+/// # Parameters
+/// `create_file`: Creates new config file if none exists
+pub fn get_config_path(create_file: bool) -> PathBuf {
     let project_dir = ProjectDirs::from(
         QUALIFIER,
         ORGANIZATION,
@@ -51,7 +55,7 @@ pub fn get_config_path() -> PathBuf {
             PathBuf::from(path).join("config.ini")
         }
     };
-    if !config_path.exists() {
+    if !config_path.exists() && create_file {
         // creates conf file if it doesnt exists
         if let Some(parent) = config_path.parent() {
             // make sure dir exists

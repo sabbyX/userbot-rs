@@ -20,7 +20,7 @@ use log::{error, warn};
 use dialoguer::console::style;
 
 pub fn load_config() -> Option<ini::Ini> {
-    match ini::Ini::load_from_file(get_config_path()) {
+    match ini::Ini::load_from_file(get_config_path(true)) {
         Ok(val) => Some(val),
         Err(e) => {
             match e {
@@ -33,7 +33,7 @@ pub fn load_config() -> Option<ini::Ini> {
                     std::process::exit(1);
                 },
                 ini::Error::Io(e) => {
-                    warn!("Io Error occured when fetching configuration file: {}", style(e.to_string()).bold().red());
+                    warn!("Io Error occurred when fetching configuration file: {}", style(e.to_string()).bold().red());
                     None
                 }
             }
