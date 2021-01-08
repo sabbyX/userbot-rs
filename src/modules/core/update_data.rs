@@ -15,17 +15,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Configuration schema
-#[derive(Clone)]
-pub struct Config {
-    /// Telegram API configurations
-    pub telegram: Telegram
-}
+use grammers_client::ClientHandle;
+use crate::config::Config;
 
 #[derive(Clone)]
-pub struct Telegram {
-    /// Api ID from Telegram
-    pub api_id: i32,
-    /// Api Hash from Telegram
-    pub api_hash: String,
+pub struct UpdateData {
+    pub client: ClientHandle,
+    pub config: Config,
+}
+
+impl UpdateData {
+    pub fn new(client: ClientHandle, config: Config) -> Self {
+        Self {
+            client,
+            config
+        }
+    }
 }

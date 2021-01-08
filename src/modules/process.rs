@@ -2,11 +2,12 @@
 use anyhow::Result;
 use userbot_rs_macros::handler;
 use clap::{Clap, AppSettings, ArgSettings};
-use grammers_client::{types::Message, ClientHandle, InputMessage};
+use grammers_client::{types::Message, InputMessage};
 use tokio::process::Command;
 use kantex_rs::{Document, Sections, FormattedText, KeyValueItem, Stringify};
 use which::which;
 use std::ffi::OsStr;
+use crate::modules::core::UpdateData;
 
 /// Plugin to execute shell commands
 #[derive(Clap)]
@@ -18,7 +19,7 @@ struct Arguments {
 }
 
 #[handler(command = "proc")]
-pub async fn process_command(mut message: Message, _: ClientHandle) -> Result<()> {
+pub async fn process_command(mut message: Message, _: UpdateData) -> Result<()> {
     let parsed = Arguments::try_parse_from(message.text().trim_start_matches("*proc").split_whitespace());
     if let Ok(args) = parsed {
         // inject arguments

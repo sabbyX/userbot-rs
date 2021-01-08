@@ -17,12 +17,12 @@
 
 use clap::{AppSettings, Clap};
 use grammers_client::types::Message;
-use grammers_client::{ClientHandle, InputMessage};
+use grammers_client::InputMessage;
 use kantex_rs::*;
 use userbot_rs_macros::handler;
 use anyhow::Result;
 
-use crate::versions;
+use crate::{versions, modules::core::UpdateData};
 
 /// Shows information about userbot
 #[derive(Clap)]
@@ -35,10 +35,7 @@ struct Arguments {
 }
 
 #[handler(command = "userbot")]
-pub async fn alive_command(
-    mut message: Message,
-    _: ClientHandle,
-) -> Result<()> {
+pub async fn alive_command(mut message: Message, _: UpdateData,) -> Result<()> {
     let args: Arguments = match Arguments::try_parse_from(
         message
             .text()

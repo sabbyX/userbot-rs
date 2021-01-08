@@ -52,7 +52,7 @@ pub fn get_config_path(create_file: bool) -> PathBuf {
             std::process::exit(1)
         } else {
             let path = path_env_var.as_ref().unwrap();
-            PathBuf::from(path).join("config.ini")
+            PathBuf::from(path).join(CONFIG_FILENAME)
         }
     };
     if !config_path.exists() && create_file {

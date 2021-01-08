@@ -17,22 +17,20 @@
 
 use clap::{AppSettings, Clap};
 use grammers_client::types::Message;
-use grammers_client::{ClientHandle, InputMessage};
+use grammers_client::InputMessage;
 use grammers_tl_types as tl;
 use std::time;
 use userbot_rs_macros::handler;
 use kantex_rs::{Document, Sections, FormattedText, Stringify};
 use anyhow::Result;
+use crate::modules::core::UpdateData;
 
 #[derive(Clap)]
 #[clap(name = "ping", setting = AppSettings::NoBinaryName, version = "0.1.0")]
 struct Arguments;
 
 #[handler(command = "ping")]
-pub async fn ping(
-    mut message: Message,
-    mut client: ClientHandle,
-) -> Result<()> {
+pub async fn ping(mut message: Message, mut data: UpdateData,) -> Result<()> {
     if let Err(args) = Arguments::try_parse_from(
         message
             .text()
@@ -43,7 +41,7 @@ pub async fn ping(
         if let Err(e) = result { message.reply(InputMessage::text(e.to_string())).await? }
     } else {
         let start = time::Instant::now();
-        client.invoke(&tl::functions::Ping { ping_id: 0 }).await?;
+        data.client.invoke(&tl::functions::Ping { ping_id: 0 }).await?;
         let mut ping_ = (time::Instant::now() - start).as_millis().to_string();
         ping_.push_str(" ms");
         message.reply(InputMessage::html(

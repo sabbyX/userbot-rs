@@ -17,14 +17,13 @@
 
 mod modules;
 mod utils;
-pub(crate) mod versions;
+mod versions;
 mod tui;
 mod cmd;
 mod config;
 
-use grammers_client::{Client, ClientHandle, Config, Update, UpdateIter};
+use grammers_client::{Client, Config, Update, UpdateIter};
 use grammers_session::Session;
-use modules::core::dispatcher::UpdateController;
 use std::process::exit;
 use anyhow::Result;
 
@@ -38,6 +37,8 @@ use utils::login::{create_client_backend_connection};
 use crate::utils::login::handle_signin_result;
 use dialoguer::console::style;
 use crate::config::ConfigControl;
+use crate::modules::core::{UpdateData, dispatcher::UpdateController};
+use std::path::PathBuf;
 
 fn setup_logger() -> Result<(), fern::InitError> {
     let color = ColoredLevelConfig::new()
@@ -69,7 +70,7 @@ async fn async_main(
     config: config::Config,
 ) -> anyhow::Result<()> {
     info!("Connecting to Telegram...");
-    let telegram_conf = config.telegram;
+    let telegram_conf = &config.telegram;
     let mut client = Client::connect(Config {
         session: Session::load_or_create("userbot")?,
         api_id: telegram_conf.api_id,
@@ -113,16 +114,18 @@ async fn async_main(
             }
         };
     }
-    info!("Initialising modules...");
+    info!("Initializing modules...");
     let controller = Arc::new(modules::initialise());
-    info!("Sucessfully intialized all modules");
+    info!("Successfully initialized all modules");
+
+    let client_handle = client.handle();
     while let Ok(Some(updates)) = client.next_updates().await {
         // copy values
-        let client_handle = client.handle();
+        let data = UpdateData::new(client_handle.clone(), config.clone());
         let controller = controller.clone();
         tokio::task::spawn(async move {
-            debug!("Starting to recieve updates");
-            match handle_updates(updates, controller, client_handle).await {
+            debug!("Starting to receive updates");
+            match handle_updates(updates, controller, data).await {
                 Ok(_) => {}
                 Err(e) => {
                     error!("Error while handling updates {}", e);
@@ -137,11 +140,11 @@ async fn async_main(
 async fn handle_updates(
     updates: UpdateIter,
     controller: Arc<UpdateController>,
-    client: ClientHandle,
+    data: UpdateData,
 ) -> Result<()> {
     for update in updates {
         if let Update::NewMessage(msg) = update {
-            let result = controller.notify(&msg, &client).await;
+            let result = controller.notify(&msg, data.clone()).await;
             match result {
                 Ok(_) => {}
                 Err(e) => match controller.propogate_error(msg.clone(), e).await {
@@ -182,7 +185,7 @@ fn main() -> anyhow::Result<()> {
     match setup_logger() {
         Ok(_) => {}
         Err(e) => {
-            error!("Internal Error Occured at initiating logger [fern]");
+            error!("Internal Error Occurred at initiating logger [fern]");
             panic!(e);
         }
     }
@@ -195,8 +198,8 @@ fn main() -> anyhow::Result<()> {
 
     let config_control = if args.app_id.is_none() | args.app_hash.is_none() {
         debug!("Cant find `API ID` or `API_HASH`, checking for saved configuration");
-        let is_tgconf_exist = ConfigControl::check_section_exists("telegram");
-        if !is_tgconf_exist {
+        let is_conf_exist = ConfigControl::check_section_exists("telegram");
+        if !is_conf_exist {
             println!(
                 "Can't fetch `{}` or `{}`, view help by using flag `{}` or `{}`",
                 style("api_id").blue(),
@@ -217,7 +220,7 @@ fn main() -> anyhow::Result<()> {
             debug!("Successfully updated the configuration file");
             conf.get_config_schema()?
         } else {
-            error!("Unexepected result occured when updating configuration file");
+            error!("Unexpected result occurred when updating configuration file");
             // generate a fake config
             utils::startup::generate_fake_config(args.app_id.unwrap(), args.app_hash.unwrap())
         }
@@ -231,7 +234,7 @@ fn main() -> anyhow::Result<()> {
     {
         Ok(_) => {}
         Err(e) => {
-            error!("Unhandled error occured: {}", style(e.to_string()).red().bold());
+            error!("Unhandled error occurred: {}", style(e.to_string()).red().bold());
             // panic!(e);
         }
     };
