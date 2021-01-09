@@ -25,7 +25,7 @@ const PACKAGES: [&str; 1] = ["grammers-client"];
 fn main() {
     // Read Cargo.lock and de-toml it
     let mut lock_buf = String::new();
-    fs::File::open("Cargo.lock").unwrap().read_to_string(&mut lock_buf).unwrap();
+    fs::File::open("../../Cargo.lock").unwrap().read_to_string(&mut lock_buf).unwrap();
     let lock_toml = toml::Parser::new(&lock_buf).parse().unwrap();
 
     // Get the table of [[package]]s. This is the deep list of dependencies and dependencies of

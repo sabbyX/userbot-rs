@@ -1,0 +1,14 @@
+[package]
+name = "userbot-rs-macros"
+version = "0.2.0"
+authors = ["sabby <sabby.6@outlook.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1.0.7"
+syn = { version = "1.0.54", features = ["full"] }
+proc-macro2 = "1"

@@ -1,0 +1,33 @@
+[package]
+name = "userbot_rs"
+version = "0.1.1"
+authors = ["sabby <sabby.6@outlook.com>"]
+edition = "2018"
+
+[dependencies]
+grammers-client = { git = "https://github.com/Lonami/grammers.git", features = ["html"] }
+grammers-session = { git = "https://github.com/Lonami/grammers.git" }
+grammers-tl-types = { git = "https://github.com/Lonami/grammers.git" }
+grammers-mtsender = { git = "https://github.com/lonami/grammers.git" }
+tokio = { version = "1.0", features = ["rt", "process"] }
+async-trait = "0.1"
+userbot-rs-macros = { path = "../userbot-rs-macros" }
+clap = { version = "3.0.0-beta.2" }
+log = "0.4"
+fern = { version = "0.6", features = ["colored"]}
+kantex-rs = { git = "https://github.com/sabbyX/KanTeX.git" }
+dialoguer = "0.7.1"
+crossbeam-channel = "0.4.4"
+anyhow = "1.0.37"
+which = "4.0.2"
+rust-ini = "0.16"
+directories = "3.0.1"
+
+[dependencies.cursive]
+version = "0.15"
+default-features = false
+# Windows support
+features = ["pancurses-backend"]
+
+[build-dependencies]
+toml = "0.2"
