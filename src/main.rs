@@ -18,7 +18,6 @@
 mod modules;
 mod utils;
 mod versions;
-mod tui;
 mod cmd;
 mod config;
 
