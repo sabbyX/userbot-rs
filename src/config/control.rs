@@ -69,7 +69,7 @@ impl ConfigControl {
 
     /// Consumes `self` and returns reloaded [ConfigControl](./struct.ConfigControl.html)
     pub fn reload(&mut self) -> Option<()> {
-        /// TODO: Support for using user-defined configuration file path
+        // TODO: Support for using user-defined configuration file path
         self.config = load_config(None)?;
         Some(())
     }
