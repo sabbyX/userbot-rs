@@ -15,12 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use grammers_client::ClientHandle;
 use log::debug;
 
 use grammers_client::types::Message;
 use anyhow::{Result, Error};
-use super::{error_handler::ErrorHandler, handler::{Handler, InternalHandlerStructure}, Flags};
+use super::{error_handler::ErrorHandler, handler::{Handler, InternalHandlerStructure}, Flags, UpdateData};
 
 /// Dispatcher, used to register handlers, propagate updates.
 /// # Examples
@@ -47,7 +46,7 @@ impl UpdateController {
     /// Method to propagate updates to handlers
     /// # Parameters
     /// * `message`: Currently only supports [message](/grammers_client/types/struct.Message.html) _update type_ to be propagated!
-    pub async fn notify(&self,message: &Message, client: &ClientHandle,) -> Result<()> {
+    pub async fn notify(&self, message: &Message, data: UpdateData,) -> Result<()> {
         if !message.text().starts_with('*') { return Ok(()); };
         let command = &message.text().split_whitespace().next().unwrap()[1..];
         for handler in &self.handlers {
@@ -61,7 +60,7 @@ impl UpdateController {
                     if !message.outgoing() { continue }
                 }
             }
-            handler.0.handle(message.clone(), client.clone()).await?
+            handler.0.handle(message.clone(), data.clone()).await?
         }
         Ok(())
     }

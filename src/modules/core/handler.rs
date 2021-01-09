@@ -17,10 +17,8 @@
  
 use async_trait::async_trait;
 use grammers_client::types::Message;
-use grammers_client::ClientHandle;
 use anyhow::Result;
-use crate::modules::core::Flags;
-use crate::modules::core::command::CommandPolicy;
+use crate::modules::core::{CommandPolicy, Flags, UpdateData};
 
 /// Implement `Handler` using the trait
 /// # Examples
@@ -31,7 +29,7 @@ use crate::modules::core::command::CommandPolicy;
 #[async_trait]
 pub trait Handler: HandlerClone + Send + Sync {
     /// This method will first to be called by [`UpdateController`](../dispatcher/struct.UpdateController.html)
-    async fn handle(&self, message: Message, client: ClientHandle) -> Result<()>;
+    async fn handle(&self, message: Message, data: UpdateData) -> Result<()>;
     fn command_policy(&self) -> CommandPolicy;
 }
 

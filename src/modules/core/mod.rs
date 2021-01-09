@@ -20,5 +20,6 @@ pub mod handler;
 pub mod error_handler;
 mod flags;
 mod command;
+mod update_data;
 
-pub use {flags::Flags, command::CommandPolicy};
+pub use {flags::Flags, command::CommandPolicy, update_data::UpdateData};

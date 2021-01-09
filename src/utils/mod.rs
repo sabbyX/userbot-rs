@@ -16,3 +16,5 @@
  */
  
 pub(crate) mod login;
+pub(crate) mod startup;
+pub(crate) mod functions;
