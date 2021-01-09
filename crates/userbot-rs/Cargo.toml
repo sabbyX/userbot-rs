@@ -30,4 +30,4 @@ default-features = false
 features = ["pancurses-backend"]
 
 [build-dependencies]
-toml = "0.2"
+toml = "0.5"
