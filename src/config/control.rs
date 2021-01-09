@@ -45,6 +45,7 @@ impl ConfigControl {
         })
     }
 
+    /// Overwrites given _telegram_ configuration (`API_ID` and `API_HASH`) into configuration file
     pub fn write_telegram_conf(&mut self, api_id: i32, api_hash: String) -> anyhow::Result<&Self> {
         let ini = Self::__gen_telegram_section(api_id, api_hash, Some(self.config.clone()));
         ini.write_to_file(get_config_path(true))?;
@@ -68,10 +69,14 @@ impl ConfigControl {
 
     /// Consumes `self` and returns reloaded [ConfigControl](./struct.ConfigControl.html)
     pub fn reload(&mut self) -> Option<()> {
+        /// TODO: Support for using user-defined configuration file path
         self.config = load_config(None)?;
         Some(())
     }
 
+    /// Check whether a section exist in configuration file
+    /// # Note
+    /// This would return `false` even when configuration file is not found in desired path.
     pub fn check_section_exists(section_name: &str, path: Option<PathBuf>) -> bool {
         let config = load_config(path);
         if config.is_none() { return false; }

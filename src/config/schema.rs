@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Configuration schema
+/// Configuration struct
 #[derive(Clone)]
 pub struct Config {
     /// Telegram API configurations
