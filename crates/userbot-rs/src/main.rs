@@ -174,10 +174,6 @@ struct Args {
     #[clap(long)]
     config: Option<PathBuf>,
 
-    /// Launch userbot in No-GUI way
-    #[clap(long)]
-    no_gui: bool,
-
     /// Resets the configuration file
     #[clap(long)]
     reset_conf: bool
