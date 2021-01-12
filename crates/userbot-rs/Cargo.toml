@@ -18,7 +18,7 @@ fern = { version = "0.6", features = ["colored"]}
 kantex-rs = { git = "https://github.com/sabbyX/KanTeX.git" }
 dialoguer = "0.7.1"
 crossbeam-channel = "0.4.4"
-anyhow = "1.0.37"
+anyhow = "1.0.38"
 which = "4.0.2"
 rust-ini = "0.16"
 directories = "3.0.1"
