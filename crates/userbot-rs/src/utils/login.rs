@@ -118,7 +118,7 @@ impl BiMessage for ClientBiMessage {
     type Out = (String, String);
 }
 
-pub async fn handle_signin_result(result: Result<User, SignInError>, client_service: &BackendConnection, gram_client: &mut Client) {
+pub async fn handle_signin_result<SessionType: grammers_session::Session>(result: Result<User, SignInError>, client_service: &BackendConnection, gram_client: &mut Client<SessionType>) {
     match result {
         Err(e) => {
             match e {
