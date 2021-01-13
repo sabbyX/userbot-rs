@@ -22,7 +22,7 @@ mod cmd;
 mod config;
 
 use grammers_client::{Client, Config, Update, UpdateIter};
-use grammers_session::Session;
+use grammers_session::FileSession;
 use std::process::exit;
 use anyhow::Result;
 
@@ -71,7 +71,7 @@ async fn async_main(
     info!("Connecting to Telegram...");
     let telegram_conf = &config.telegram;
     let mut client = Client::connect(Config {
-        session: Session::load_or_create("userbot")?,
+        session: FileSession::load_or_create("userbot.session")?,
         api_id: telegram_conf.api_id,
         api_hash: telegram_conf.api_hash.clone(),
         params: Default::default(),
