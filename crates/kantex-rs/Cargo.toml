@@ -1,0 +1,8 @@
+[package]
+name = "kantex-rs"
+version = "0.1.0"
+authors = ["sabby <sabby.6@outlook.com>"]
+edition = "2018"
+
+[dependencies]
+strfmt = "0.1.6"

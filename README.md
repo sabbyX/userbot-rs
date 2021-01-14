@@ -39,6 +39,8 @@ Just file a issue [here](https://github.com/sabbyX/userbot-rs/issues)
 ## Architecture
 This repository contains both [userbot-rs](crates/userbot-rs) and [userbot-rs-macros](crates/userbot-rs-macros).
 
+Also [KanTeX-rs](crates/kantex-rs), a fork of [KanTeX (Python)](https://github.com/KanTek/KanTex), rewritten in rust.
+
 ---
 ### userbot-rs
 Ready to use userbot binary (you can get latest binary from commit artifacts section).
@@ -80,3 +82,9 @@ impl Handler for MyHandler {
 &nbsp; &nbsp; &nbsp; &nbsp; - `src/command.rs` handle the command input, parses them into [CommandPolicy](crates/userbot-rs/src/modules/core/command.rs) enum
 
 &nbsp; &nbsp; &nbsp; &nbsp; - `src/handler.rs` expands handler into struct implementing [Handler](crates/userbot-rs/src/modules/core/handler.rs) trait 
+
+## License
+
+both [userbot-rs](crates/userbot-rs) and [userbot-rs-macros](crates/userbot-rs-macros) are licensed under [GPLv3](LICENSE)
+
+whereas [KanTex-rs](crates/kantex-rs) is licensed under [LGPL](crates/kantex-rs/LICENSE)
