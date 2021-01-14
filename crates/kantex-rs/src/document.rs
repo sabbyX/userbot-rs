@@ -32,3 +32,5 @@ impl Default for Document {
         Self::new()
     }
 }
+
+crate::implement_to_string!(Document);

@@ -42,3 +42,8 @@ impl Stringify for KeyValueItem {
         format!("{}{} {}", self.key, KEY_VALUE_DELIM, self.value)
     }
 }
+
+crate::implement_to_string!(
+    MentionLink<'_>,
+    KeyValueItem
+);

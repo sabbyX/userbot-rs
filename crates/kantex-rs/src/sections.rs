@@ -92,8 +92,13 @@ impl Stringify for SubSubSections {
 
 impl SubSubSections {
     pub fn include<T: Stringify + 'static>(mut self, text: T) -> Self {
-        // let text = WHITESPACE.repeat(SUB_SUB_SECTION_INDET) + &*text.into();
         self.items.push(Box::new(text));
         self
     }
 }
+
+crate::implement_to_string!(
+    Sections,
+    SubSections,
+    SubSubSections
+);
