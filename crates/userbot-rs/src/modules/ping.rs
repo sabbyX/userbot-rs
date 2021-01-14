@@ -21,7 +21,7 @@ use grammers_client::InputMessage;
 use grammers_tl_types as tl;
 use std::time;
 use userbot_rs_macros::handler;
-use kantex_rs::{Document, Sections, FormattedText, Stringify};
+use kantex_rs::{Document, Sections, FormattedText};
 use anyhow::Result;
 use crate::modules::core::UpdateData;
 
@@ -49,7 +49,8 @@ pub async fn ping(mut message: Message, mut data: UpdateData,) -> Result<()> {
                 .add_section(
                     Sections::new("Pong")
                         .include(FormattedText::italics(ping_.as_str()))
-                ).stringify()
+                )
+                .to_string()
         )).await?;
     }
     Ok(())

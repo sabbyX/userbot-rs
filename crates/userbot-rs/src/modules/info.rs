@@ -65,6 +65,6 @@ pub async fn alive_command(mut message: Message, _: UpdateData,) -> Result<()> {
                 versions::GRAMMERS_VERSION,
             )),
     );
-    message.reply(InputMessage::html(text.stringify())).await?;
+    message.reply(InputMessage::html(text.to_string())).await?;
     Ok(())
 }

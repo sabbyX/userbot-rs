@@ -4,7 +4,7 @@ use userbot_rs_macros::handler;
 use clap::{Clap, AppSettings, ArgSettings};
 use grammers_client::{types::Message, InputMessage};
 use tokio::process::Command;
-use kantex_rs::{Document, Sections, FormattedText, KeyValueItem, Stringify};
+use kantex_rs::{Document, Sections, FormattedText, KeyValueItem};
 use which::which;
 use std::ffi::OsStr;
 use crate::modules::core::UpdateData;
@@ -53,7 +53,7 @@ pub async fn process_command(mut message: Message, _: UpdateData) -> Result<()> 
                             Sections::new("Stdout")
                                 .include(String::from_utf8_lossy(&output.stdout).to_string())
                         )
-                        .stringify()
+                        .to_string()
                 )
             )
                 .await?
