@@ -48,7 +48,7 @@ pub async fn ping(mut message: Message, mut data: UpdateData,) -> Result<()> {
             Document::new()
                 .add_section(
                     Sections::new("Pong")
-                        .add(FormattedText::italics(ping_.as_str()))
+                        .include(FormattedText::italics(ping_.as_str()))
                 ).stringify()
         )).await?;
     }

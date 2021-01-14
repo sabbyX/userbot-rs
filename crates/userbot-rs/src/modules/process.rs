@@ -43,15 +43,15 @@ pub async fn process_command(mut message: Message, _: UpdateData) -> Result<()> 
                     Document::new()
                         .add_section(
                             Sections::new("Output")
-                                .add(KeyValueItem::new(FormattedText::bold("Exit Code"), output.status.code().unwrap_or(1).to_string()))
+                                .include(KeyValueItem::new(FormattedText::bold("Exit Code"), output.status.code().unwrap_or(1).to_string()))
                         )
                         .add_section(
                             Sections::new("Stderr")
-                                .add(String::from_utf8_lossy(&output.stderr).to_string())
+                                .include(String::from_utf8_lossy(&output.stderr).to_string())
                         )
                         .add_section(
                             Sections::new("Stdout")
-                                .add(String::from_utf8_lossy(&output.stdout).to_string())
+                                .include(String::from_utf8_lossy(&output.stdout).to_string())
                         )
                         .stringify()
                 )
