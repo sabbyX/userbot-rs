@@ -15,7 +15,7 @@ userbot-rs-macros = { path = "../userbot-rs-macros" }
 clap = { version = "3.0.0-beta.2" }
 log = "0.4"
 fern = { version = "0.6", features = ["colored"]}
-kantex-rs = { git = "https://github.com/sabbyX/KanTeX.git" }
+kantex-rs = { path = "../kantex-rs" }
 dialoguer = "0.7.1"
 crossbeam-channel = "0.4.4"
 anyhow = "1.0.38"
