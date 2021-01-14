@@ -43,7 +43,4 @@ impl Stringify for KeyValueItem {
     }
 }
 
-crate::implement_to_string!(
-    MentionLink<'_>,
-    KeyValueItem
-);
+crate::implement_to_string!{ MentionLink<'_> KeyValueItem }

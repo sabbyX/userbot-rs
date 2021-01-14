@@ -1,10 +1,5 @@
 use super::{base::Stringify, styles::FormattedText};
 
-const SECTION_INDENT: usize = 4;
-const SUB_SECTION_INDENT: usize = 8;
-const SUB_SUB_SECTION_INDENT: usize = 12;
-const WHITESPACE: &str = " ";
-
 pub struct Sections {
     header: String,
     items: Vec<Box<dyn Stringify + 'static>>
@@ -24,37 +19,11 @@ impl Sections {
     }
 }
 
-impl Stringify for Sections {
-    fn stringify(&self) -> String {
-        let mut list: Vec<String> = Vec::new();
-        for i in &self.items {
-            let mut text = i.stringify();
-            text.insert_str(0, &*WHITESPACE.repeat(SECTION_INDENT));
-            list.push(text);
-        }
-        let header = FormattedText::bold(&*self.header);
-        list.insert(0, header);
-        list.join("\n")
-    }
-}
+crate::implement_stringify!{ Sections, 4 }
 
 pub struct SubSections {
     header: String,
     items: Vec<Box<dyn Stringify + 'static>>
-}
-
-impl Stringify for SubSections {
-    fn stringify(&self) -> String {
-        let mut list: Vec<String> = Vec::new();
-        for i in &self.items {
-            let mut text = i.stringify();
-            text.insert_str(0, &*WHITESPACE.repeat(SUB_SECTION_INDENT));
-            list.push(text);
-        }
-        let header = FormattedText::bold(&*self.header);
-        list.insert(0, header);
-        list.join("\n")
-    }
 }
 
 impl SubSections {
@@ -71,23 +40,11 @@ impl SubSections {
     }
 }
 
+crate::implement_stringify!{ SubSections, 8 }
+
 pub struct SubSubSections {
     header: String,
     items: Vec<Box<dyn Stringify + 'static>>,
-}
-
-impl Stringify for SubSubSections {
-    fn stringify(&self) -> String {
-        let mut list: Vec<String> = Vec::new();
-        for i in &self.items {
-            let mut text = i.stringify();
-            text.insert_str(0, &*WHITESPACE.repeat(SUB_SUB_SECTION_INDENT));
-            list.push(text);
-        }
-        let header = FormattedText::bold(&*self.header);
-        list.insert(0, header);
-        list.join("\n")
-    }
 }
 
 impl SubSubSections {
@@ -97,8 +54,8 @@ impl SubSubSections {
     }
 }
 
-crate::implement_to_string!(
-    Sections,
-    SubSections,
-    SubSubSections
-);
+crate::implement_stringify!{ SubSubSections, 8 }
+
+// auto impl
+crate::implement_to_string!{ Sections SubSections SubSubSections }
+crate::implement_add_trait!{ Sections SubSections SubSubSections }

@@ -33,4 +33,4 @@ impl Default for Document {
     }
 }
 
-crate::implement_to_string!(Document);
+crate::implement_to_string!{ Document }
