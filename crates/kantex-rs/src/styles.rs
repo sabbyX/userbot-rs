@@ -22,6 +22,7 @@ pub(crate) struct Entities<'a> {
     pub(crate) underline: Tags<'a>,
     pub(crate) strikethrough: Tags<'a>,
     pub(crate) hyperlink: &'a str,
+    pub(crate) monospace: Tags<'a>,
 }
 
 impl<'a> Entities<'a> {
@@ -41,6 +42,7 @@ impl<'a> Default for Entities<'a> {
                 underline: Tags::new("--", "--"),
                 strikethrough: Tags::new("~~", "~~"),
                 hyperlink: "[{}]({})",
+                monospace: Tags::new("`", "`"),
             }
         } else {
             Entities {
@@ -49,6 +51,7 @@ impl<'a> Default for Entities<'a> {
                 underline: Tags::new("<u>", "</u>"),
                 strikethrough: Tags::new("<s>", "</s>"),
                 hyperlink: "<a href=\"{}\">{}</a>",
+                monospace: Tags::new("<code>", "</code>")
             }
         }
     }
@@ -85,5 +88,10 @@ impl FormattedText {
         vars.insert("label".to_string(), label.to_string());
         entities.hyperlink.format(&vars)
             .unwrap_or_else(|_| "<Failed to create mention link>".to_string())
+    }
+
+    pub fn monospace(text: &str) -> String {
+        let entities = Entities::new();
+        entities.monospace.start.to_string() + text + entities.monospace.end
     }
 }

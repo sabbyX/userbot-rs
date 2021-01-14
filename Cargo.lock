@@ -783,14 +783,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "kantex-rs"
-version = "0.1.0"
-source = "git+https://github.com/sabbyX/KanTeX.git#f17586cb2c69ab22b446d30cfa08217cbd72c3bb"
-dependencies = [
- "strfmt",
-]
-
-[[package]]
 name = "kernel32-sys"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1697,7 +1689,7 @@ dependencies = [
  "grammers-mtsender",
  "grammers-session",
  "grammers-tl-types",
- "kantex-rs 0.1.0 (git+https://github.com/sabbyX/KanTeX.git)",
+ "kantex-rs",
  "log",
  "rust-ini",
  "tokio",
