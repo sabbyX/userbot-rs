@@ -26,3 +26,9 @@ impl Stringify for Document {
         list.join("\n\n")
     }
 }
+
+impl Default for Document {
+    fn default() -> Self {
+        Self::new()
+    }
+}
