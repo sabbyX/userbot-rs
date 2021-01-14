@@ -1,10 +1,8 @@
-// TODO:
-#![allow(clippy::should_implement_trait)]
 use super::{base::Stringify, styles::FormattedText};
 
 const SECTION_INDENT: usize = 4;
 const SUB_SECTION_INDENT: usize = 8;
-const SUB_SUB_SECTION_INDET: usize = 12;
+const SUB_SUB_SECTION_INDENT: usize = 12;
 const WHITESPACE: &str = " ";
 
 pub struct Sections {
@@ -19,7 +17,8 @@ impl Sections {
             items: Vec::new(),
         }
     }
-    pub fn add<T: Stringify + 'static>(mut self, text: T) -> Self {
+
+    pub fn include<T: Stringify + 'static>(mut self, text: T) -> Self {
         self.items.push(Box::new(text));
         self
     }
@@ -66,7 +65,7 @@ impl SubSections {
         }
     }
 
-    pub fn add<T: Stringify + 'static>(mut self, text: T) -> Self {
+    pub fn include<T: Stringify + 'static>(mut self, text: T) -> Self {
         self.items.push(Box::new(text));
         self
     }
@@ -82,7 +81,7 @@ impl Stringify for SubSubSections {
         let mut list: Vec<String> = Vec::new();
         for i in &self.items {
             let mut text = i.stringify();
-            text.insert_str(0, &*WHITESPACE.repeat(SUB_SUB_SECTION_INDET));
+            text.insert_str(0, &*WHITESPACE.repeat(SUB_SUB_SECTION_INDENT));
             list.push(text);
         }
         let header = FormattedText::bold(&*self.header);
@@ -92,7 +91,7 @@ impl Stringify for SubSubSections {
 }
 
 impl SubSubSections {
-    pub fn add<T: Stringify + 'static>(mut self, text: T) -> Self {
+    pub fn include<T: Stringify + 'static>(mut self, text: T) -> Self {
         // let text = WHITESPACE.repeat(SUB_SUB_SECTION_INDET) + &*text.into();
         self.items.push(Box::new(text));
         self
