@@ -1,3 +1,5 @@
+// TODO:
+#![allow(clippy::should_implement_trait)]
 use super::{base::Stringify, styles::FormattedText};
 
 const SECTION_INDENT: usize = 4;

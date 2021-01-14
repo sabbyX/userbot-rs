@@ -10,8 +10,8 @@ pub struct Tags<'a> {
 impl<'a> Tags<'a> {
     pub fn new(start: &'a str, end: &'a str) -> Self {
         Self {
-            start: start.into(),
-            end: end.into(),
+            start,
+            end,
         }
     }
 }
@@ -82,8 +82,8 @@ impl FormattedText {
         let entities = Entities::new();
         let mut vars = HashMap::new();
         vars.insert("url".to_string(), url.to_string());
-        vars.insert("lable".to_string(), label.to_string());
+        vars.insert("label".to_string(), label.to_string());
         entities.hyperlink.format(&vars)
-            .unwrap_or("<Failed to create mention link>".to_string())
+            .unwrap_or_else(|_| "<Failed to create mention link>".to_string())
     }
 }
