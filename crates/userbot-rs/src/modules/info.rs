@@ -55,16 +55,16 @@ pub async fn alive_command(mut message: Message, _: UpdateData,) -> Result<()> {
     if args.update {}
     let text = Document::new().add_section(
         Sections::new("Userbot")
-            .add(FormattedText::bold("github.com/sabbyX/userbot-rs"))
-            .add(KeyValueItem::new(
+            .include(FormattedText::bold("github.com/sabbyX/userbot-rs"))
+            .include(KeyValueItem::new(
                 FormattedText::bold("version"),
                 env!("CARGO_PKG_VERSION"),
             ))
-            .add(KeyValueItem::new(
+            .include(KeyValueItem::new(
                 FormattedText::bold("grammers"),
                 versions::GRAMMERS_VERSION,
             )),
     );
-    message.reply(InputMessage::html(text.stringify())).await?;
+    message.reply(InputMessage::html(text.to_string())).await?;
     Ok(())
 }

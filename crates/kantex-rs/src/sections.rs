@@ -1,12 +1,7 @@
-// TODO:
-#![allow(clippy::should_implement_trait)]
 use super::{base::Stringify, styles::FormattedText};
+use crate::{__kantex_implement_stringify, __kantex_implement_to_string, __kantex_implement_add_trait};
 
-const SECTION_INDENT: usize = 4;
-const SUB_SECTION_INDENT: usize = 8;
-const SUB_SUB_SECTION_INDET: usize = 12;
-const WHITESPACE: &str = " ";
-
+#[derive(Clone)]
 pub struct Sections {
     header: String,
     items: Vec<Box<dyn Stringify + 'static>>
@@ -19,43 +14,19 @@ impl Sections {
             items: Vec::new(),
         }
     }
-    pub fn add<T: Stringify + 'static>(mut self, text: T) -> Self {
+
+    pub fn include<T: Stringify + 'static>(&mut self, text: T) -> Self {
         self.items.push(Box::new(text));
-        self
+        self.clone()
     }
 }
 
-impl Stringify for Sections {
-    fn stringify(&self) -> String {
-        let mut list: Vec<String> = Vec::new();
-        for i in &self.items {
-            let mut text = i.stringify();
-            text.insert_str(0, &*WHITESPACE.repeat(SECTION_INDENT));
-            list.push(text);
-        }
-        let header = FormattedText::bold(&*self.header);
-        list.insert(0, header);
-        list.join("\n")
-    }
-}
+__kantex_implement_stringify!{ Sections, 4 }
 
+#[derive(Clone)]
 pub struct SubSections {
     header: String,
     items: Vec<Box<dyn Stringify + 'static>>
-}
-
-impl Stringify for SubSections {
-    fn stringify(&self) -> String {
-        let mut list: Vec<String> = Vec::new();
-        for i in &self.items {
-            let mut text = i.stringify();
-            text.insert_str(0, &*WHITESPACE.repeat(SUB_SECTION_INDENT));
-            list.push(text);
-        }
-        let header = FormattedText::bold(&*self.header);
-        list.insert(0, header);
-        list.join("\n")
-    }
 }
 
 impl SubSections {
@@ -66,35 +37,90 @@ impl SubSections {
         }
     }
 
-    pub fn add<T: Stringify + 'static>(mut self, text: T) -> Self {
+    pub fn include<T: Stringify + 'static>(&mut self, text: T) -> Self {
         self.items.push(Box::new(text));
-        self
+        self.clone()
     }
 }
 
+__kantex_implement_stringify!{ SubSections, 8 }
+
+#[derive(Clone)]
 pub struct SubSubSections {
     header: String,
     items: Vec<Box<dyn Stringify + 'static>>,
 }
 
-impl Stringify for SubSubSections {
-    fn stringify(&self) -> String {
-        let mut list: Vec<String> = Vec::new();
-        for i in &self.items {
-            let mut text = i.stringify();
-            text.insert_str(0, &*WHITESPACE.repeat(SUB_SUB_SECTION_INDET));
-            list.push(text);
+impl SubSubSections {
+
+    pub fn new(header: &str) -> Self {
+        Self {
+            header: header.to_owned(),
+            items: Vec::new(),
         }
-        let header = FormattedText::bold(&*self.header);
-        list.insert(0, header);
-        list.join("\n")
+    }
+
+    pub fn include<T: Stringify + 'static>(&mut self, text: T) -> Self {
+        self.items.push(Box::new(text));
+        self.clone()
     }
 }
 
-impl SubSubSections {
-    pub fn add<T: Stringify + 'static>(mut self, text: T) -> Self {
-        // let text = WHITESPACE.repeat(SUB_SUB_SECTION_INDET) + &*text.into();
-        self.items.push(Box::new(text));
-        self
+__kantex_implement_stringify!{ SubSubSections, 12 }
+
+// auto impl
+__kantex_implement_to_string!{ Sections SubSections SubSubSections }
+__kantex_implement_add_trait!{ Sections SubSections SubSubSections }
+
+mod tests {
+    #[test]
+    fn test_section() {
+        use crate::Sections;
+        //                                  ---- 4
+        let expected = "<b>title</b>\n    key";
+        let actual = Sections::new("title")
+            .include("key");
+        assert_eq!(actual.to_string(), expected)
+    }
+
+    #[test]
+    fn test_sub_section() {
+        use crate::{Sections, SubSections};
+        //                                  ---- 4            -------- 8
+        let expected = "<b>title</b>\n    <b>title</b>\n        key";
+        let actual = Sections::new("title")
+            .include(
+                SubSections::new("title")
+                    .include("key")
+            );
+        assert_eq!(actual.to_string(), expected)
+    }
+
+    #[test]
+    fn test_sub_sub_section() {
+        use crate::{Sections, SubSections, SubSubSections};
+
+        //                                  ---- 4            -------- 8            ------------ 12
+        let expected = "<b>title</b>\n    <b>title</b>\n        <b>title</b>\n            key";
+        let actual = Sections::new("title")
+            .include(
+                SubSections::new("title")
+                    .include(
+                        SubSubSections::new("title")
+                            .include("key")
+                    )
+            );
+        assert_eq!(actual.to_string(), expected)
+    }
+
+    #[test]
+    fn test_sections_non_inline() {
+        use crate::Sections;
+
+        let expected = "<b>title</b>\n    key\n    key";
+        let mut section = Sections::new("title");
+        section.include("key");
+        section.include("key");
+        assert_eq!(section.to_string(), expected);
     }
 }
