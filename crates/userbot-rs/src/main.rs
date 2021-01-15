@@ -77,6 +77,20 @@ async fn async_main(
         params: Default::default(),
     })
     .await?;
+    {
+        debug!("Registering Ctrl-C signal handler");
+        let client_handle = client.handle();
+        ctrlc::set_handler(
+            move || {
+                let mut handle = client_handle.clone();
+                log::warn!("Ctrl-C signal received, exiting!");
+                runtime::Builder::new_current_thread()
+                    .build()
+                    .unwrap_or_else(|_| std::process::exit(1))
+                    .block_on(async move { handle.disconnect().await; });
+            }
+        )?;
+    }
     debug!("Successfully connected..!");
     debug!("Checking whether user is authenticated...");
     if !client.is_authorized().await? {
