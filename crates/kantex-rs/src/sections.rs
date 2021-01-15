@@ -1,4 +1,5 @@
 use super::{base::Stringify, styles::FormattedText};
+use crate::{__kantex_implement_stringify, __kantex_implement_to_string, __kantex_implement_add_trait};
 
 #[derive(Clone)]
 pub struct Sections {
@@ -20,7 +21,7 @@ impl Sections {
     }
 }
 
-crate::implement_stringify!{ Sections, 4 }
+__kantex_implement_stringify!{ Sections, 4 }
 
 #[derive(Clone)]
 pub struct SubSections {
@@ -42,7 +43,7 @@ impl SubSections {
     }
 }
 
-crate::implement_stringify!{ SubSections, 8 }
+__kantex_implement_stringify!{ SubSections, 8 }
 
 #[derive(Clone)]
 pub struct SubSubSections {
@@ -65,11 +66,11 @@ impl SubSubSections {
     }
 }
 
-crate::implement_stringify!{ SubSubSections, 12 }
+__kantex_implement_stringify!{ SubSubSections, 12 }
 
 // auto impl
-crate::implement_to_string!{ Sections SubSections SubSubSections }
-crate::implement_add_trait!{ Sections SubSections SubSubSections }
+__kantex_implement_to_string!{ Sections SubSections SubSubSections }
+__kantex_implement_add_trait!{ Sections SubSections SubSubSections }
 
 mod tests {
     #[test]

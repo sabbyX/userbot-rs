@@ -1,4 +1,5 @@
 use super::base::Stringify;
+use crate::__kantex_implement_to_string;
 
 #[derive(Clone)]
 pub struct Document {
@@ -34,7 +35,7 @@ impl Default for Document {
     }
 }
 
-crate::implement_to_string!{ Document }
+__kantex_implement_to_string!{ Document }
 
 mod tests {
     #[test]

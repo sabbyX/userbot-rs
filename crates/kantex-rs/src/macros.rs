@@ -1,7 +1,7 @@
 
 #[macro_export]
 /// Macro to implement [`ToString`] for kantex-rs items
-macro_rules! implement_to_string {
+macro_rules! __kantex_implement_to_string {
     ($( $types:ty )*) => (
         $(
             impl ToString for $types {
@@ -14,7 +14,7 @@ macro_rules! implement_to_string {
 }
 
 #[macro_export]
-macro_rules! implement_add_trait {
+macro_rules! __kantex_implement_add_trait {
     ($($type:ty)*) => (
         $(
             impl std::ops::Add for $type {
@@ -28,7 +28,7 @@ macro_rules! implement_add_trait {
 }
 
 #[macro_export]
-macro_rules! implement_stringify {
+macro_rules! __kantex_implement_stringify {
     ($type:ty, $indent:literal) => {
         impl crate::base::Stringify for $type {
             fn stringify(&self) -> std::string::String {

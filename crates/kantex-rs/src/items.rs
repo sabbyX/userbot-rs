@@ -1,4 +1,5 @@
 use super::{base::Stringify, styles::FormattedText};
+use crate::__kantex_implement_to_string;
 
 const KEY_VALUE_DELIM: char = ':';
 
@@ -44,7 +45,7 @@ impl Stringify for KeyValueItem {
     }
 }
 
-crate::implement_to_string!{ MentionLink KeyValueItem }
+__kantex_implement_to_string!{ MentionLink KeyValueItem }
 
 mod tests {
 
