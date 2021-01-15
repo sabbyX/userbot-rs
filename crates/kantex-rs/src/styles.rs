@@ -41,7 +41,7 @@ impl<'a> Default for Entities<'a> {
                 italics: Tags::new("__", "__"),
                 underline: Tags::new("--", "--"),
                 strikethrough: Tags::new("~~", "~~"),
-                hyperlink: "[{}]({})",
+                hyperlink: "[{label}]({url})",
                 monospace: Tags::new("`", "`"),
             }
         } else {
@@ -50,7 +50,7 @@ impl<'a> Default for Entities<'a> {
                 italics: Tags::new("<i>", "</i>"),
                 underline: Tags::new("<u>", "</u>"),
                 strikethrough: Tags::new("<s>", "</s>"),
-                hyperlink: "<a href=\"{}\">{}</a>",
+                hyperlink: "<a href=\"{url}\">{label}</a>",
                 monospace: Tags::new("<code>", "</code>")
             }
         }

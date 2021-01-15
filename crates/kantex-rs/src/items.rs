@@ -2,24 +2,24 @@ use super::{base::Stringify, styles::FormattedText};
 
 const KEY_VALUE_DELIM: char = ':';
 
-#[derive(Copy, Clone)]
-pub struct MentionLink<'life> {
-    label: &'life str,
+#[derive(Clone)]
+pub struct MentionLink {
+    label: String,
     uid: i32,
 }
 
-impl<'life> MentionLink<'life> {
-    pub fn new(label: &'life str, uid: i32) -> Self {
+impl MentionLink {
+    pub fn new(label: &str, uid: i32) -> Self {
         Self {
-            label,
+            label: label.into(),
             uid
         }
     }
 }
 
-impl Stringify for MentionLink<'static> {
+impl Stringify for MentionLink {
     fn stringify(&self) -> String {
-        FormattedText::hyperlink(self.label, format!("tg://user?id={}", self.uid).as_str())
+        FormattedText::hyperlink(self.label.as_str(), format!("tg://user?id={}", self.uid).as_str())
     }
 }
 
@@ -44,7 +44,7 @@ impl Stringify for KeyValueItem {
     }
 }
 
-crate::implement_to_string!{ MentionLink<'static> KeyValueItem }
+crate::implement_to_string!{ MentionLink KeyValueItem }
 
 mod tests {
 
