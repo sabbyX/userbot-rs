@@ -19,7 +19,7 @@ macro_rules! implement_add_trait {
         $(
             impl std::ops::Add for $type {
                 type Output = Self;
-                fn add(self, rhs: Self) -> Self {
+                fn add(mut self, rhs: Self) -> Self {
                     self.include(rhs)
                 }
             }

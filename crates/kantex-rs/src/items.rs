@@ -17,12 +17,13 @@ impl<'life> MentionLink<'life> {
     }
 }
 
-impl Stringify for MentionLink<'_> {
+impl Stringify for MentionLink<'static> {
     fn stringify(&self) -> String {
         FormattedText::hyperlink(self.label, format!("tg://user?id={}", self.uid).as_str())
     }
 }
 
+#[derive(Clone)]
 pub struct KeyValueItem {
     key: String,
     value: String,
@@ -43,4 +44,25 @@ impl Stringify for KeyValueItem {
     }
 }
 
-crate::implement_to_string!{ MentionLink<'_> KeyValueItem }
+crate::implement_to_string!{ MentionLink<'static> KeyValueItem }
+
+mod tests {
+
+    #[test]
+    fn test_key_value() {
+        use crate::KeyValueItem;
+
+        let expected = "key: value";
+        let actual = KeyValueItem::new("key", "value");
+        assert_eq!(actual.to_string(), expected)
+    }
+
+    #[test]
+    fn test_mention_link() {
+        use crate::MentionLink;
+
+        let expected = r##"<a href="tg://user?id=0">user</a>"##;
+        let actual = MentionLink::new("user", 0);
+        assert_eq!(actual.to_string(), expected);
+    }
+}
