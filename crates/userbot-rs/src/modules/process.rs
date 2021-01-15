@@ -37,24 +37,29 @@ pub async fn process_command(mut message: Message, _: UpdateData) -> Result<()> 
             .args(arguments)
             .output()
             .await?;
+
+        let mut doc = Document::new()
+            .add_section(
+                Sections::new("Output")
+                    .include(KeyValueItem::new(FormattedText::bold("Exit Code"), output.status.code().unwrap_or(1).to_string()))
+            );
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        if !stderr.is_empty() {
+            doc.add_section(
+                Sections::new("Stderr")
+                    .include(FormattedText::monospace(stderr.as_ref()))
+            );
+        }
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        if !stdout.is_empty() {
+            doc.add_section(
+                Sections::new("Stdout")
+                    .include(FormattedText::monospace(stdout.as_ref()))
+            );
+        }
         Ok(
             message.reply(
-                InputMessage::html(
-                    Document::new()
-                        .add_section(
-                            Sections::new("Output")
-                                .include(KeyValueItem::new(FormattedText::bold("Exit Code"), output.status.code().unwrap_or(1).to_string()))
-                        )
-                        .add_section(
-                            Sections::new("Stderr")
-                                .include(String::from_utf8_lossy(&output.stderr).to_string())
-                        )
-                        .add_section(
-                            Sections::new("Stdout")
-                                .include(String::from_utf8_lossy(&output.stdout).to_string())
-                        )
-                        .to_string()
-                )
+                InputMessage::html(doc.to_string())
             )
                 .await?
         )
